@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#07110b">
+  <meta name="color-scheme" content="dark">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="RWA Passport">
+  <meta name="description" content="Recognize real OBJ meshes with 3DPass Grid2d, keep evidence private on-device, and anchor object passports to Robinhood Chain testnet.">
+  <title>RWA Passport Wallet</title>
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png">
+  <link rel="manifest" href="../manifest.webmanifest?v=20260717.1">
+  <link rel="stylesheet" href="wallet.css?v=20260717.3">
+  <script type="module" src="wallet.js?v=20260717.3"></script>
+</head>
+<body>
+  <a class="skip-link" href="#wallet-main">Skip to wallet</a>
+
+  <div class="app-shell">
+    <header class="app-header">
+      <a class="wordmark" href="../" aria-label="RWA Protocol home">
+        <svg viewBox="0 0 40 40" aria-hidden="true">
+          <path d="M6 12.5 20 4l14 8.5v15L20 36 6 27.5z" fill="none" stroke="currentColor" stroke-width="2"/>
+          <path d="m6 12.5 14 8.4 14-8.4M20 20.9V36" fill="none" stroke="currentColor" stroke-width="2"/>
+          <circle cx="20" cy="20.9" r="3.4" fill="currentColor"/>
+        </svg>
+        <span><b>RWA</b> Passport</span>
+      </a>
+      <div class="header-actions">
+        <span class="network-chip"><i></i>Robinhood testnet</span>
+        <button class="wallet-button" id="connect-wallet" type="button">
+          <span class="wallet-button-label">Connect wallet</span>
+        </button>
+      </div>
+    </header>
+
+    <main id="wallet-main" class="wallet-main">
+      <section class="app-screen is-active" data-screen="home" aria-labelledby="home-title">
+        <div class="home-hero">
+          <div class="hero-copy">
+            <p class="eyebrow">Physical identity, computed locally</p>
+            <h1 id="home-title">Give every object<br><span>a verifiable passport.</span></h1>
+            <p class="hero-summary">Import a real 3D scan, compute its 3DPass Grid2d fingerprint on this device, then anchor the evidence digest to Robinhood Chain.</p>
+            <div class="hero-actions">
+              <button class="primary-button" type="button" data-go="scan">
+                <span>Scan an asset</span><b aria-hidden="true">→</b>
+              </button>
+              <button class="text-button" type="button" data-go="verify">Verify a rescan</button>
+            </div>
+            <div class="proof-strip" aria-label="Core product guarantees">
+              <span><i>01</i> Mesh stays local</span>
+              <span><i>02</i> Grid2d Wasm</span>
+              <span><i>03</i> User-approved anchor</span>
+            </div>
+          </div>
+
+          <div class="identity-visual" aria-hidden="true">
+            <div class="visual-grid"></div>
+            <div class="scan-orbit orbit-one"></div>
+            <div class="scan-orbit orbit-two"></div>
+            <div class="object-core">
+              <svg viewBox="0 0 280 280">
+                <defs>
+                  <linearGradient id="core-fill" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0" stop-color="#e7ffea" stop-opacity=".92"/>
+                    <stop offset="1" stop-color="#00c805" stop-opacity=".16"/>
+                  </linearGradient>
+                </defs>
+                <path d="m70 86 70-40 72 42-8 99-65 47-72-45z" fill="url(#core-fill)" stroke="#86ff94" stroke-width="2"/>
+                <path d="m70 86 69 38 73-36M139 124v110M67 189l72-65 65 63" fill="none" stroke="#07110b" stroke-opacity=".6" stroke-width="2"/>
+                <g fill="#07110b"><circle cx="70" cy="86" r="4"/><circle cx="140" cy="46" r="4"/><circle cx="212" cy="88" r="4"/><circle cx="204" cy="187" r="4"/><circle cx="139" cy="234" r="4"/><circle cx="67" cy="189" r="4"/><circle cx="139" cy="124" r="5"/></g>
+              </svg>
+            </div>
+            <div class="visual-label label-top"><small>Algorithm</small><strong>GRID2D_V3A</strong></div>
+            <div class="visual-label label-bottom"><small>Execution</small><strong>ON DEVICE</strong></div>
+          </div>
+        </div>
+
+        <section class="passport-section" aria-labelledby="passport-list-title">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Local wallet</p>
+              <h2 id="passport-list-title">Your passports</h2>
+            </div>
+            <button class="compact-button" type="button" data-go="scan">New passport</button>
+          </div>
+          <div class="passport-grid" id="passport-list"></div>
+          <div class="empty-passports" id="empty-passports">
+            <span class="empty-icon" aria-hidden="true"></span>
+            <h3>No passports yet</h3>
+            <p>Your first real mesh fingerprint will appear here. No asset data is uploaded.</p>
+            <button class="secondary-button" type="button" data-go="scan">Create first passport</button>
+          </div>
+        </section>
+
+        <section class="architecture-band" aria-label="Recognition and anchoring architecture">
+          <div><span>01</span><strong>Capture</strong><p>Export an OBJ from an iPhone LiDAR or photogrammetry scanner.</p></div>
+          <b aria-hidden="true">→</b>
+          <div><span>02</span><strong>Recognize</strong><p>3DPass Grid2d computes multiple geometry hashes in WebAssembly.</p></div>
+          <b aria-hidden="true">→</b>
+          <div><span>03</span><strong>Anchor</strong><p>Robinhood Wallet approves a digest-only testnet transaction.</p></div>
+        </section>
+      </section>
+
+      <section class="app-screen flow-screen" data-screen="scan" aria-labelledby="scan-title" hidden>
+        <header class="flow-header">
+          <button class="back-button" type="button" data-go="home" aria-label="Back to wallet">←</button>
+          <div>
+            <p class="eyebrow">New object passport</p>
+            <h1 id="scan-title">Recognize a real mesh</h1>
+          </div>
+          <span class="step-count" id="scan-step-count">Step 1 of 3</span>
+        </header>
+
+        <div class="flow-layout">
+          <div class="flow-content">
+            <section class="flow-step is-active" data-scan-step="mesh" aria-labelledby="mesh-step-title">
+              <div class="step-heading">
+                <span>01</span>
+                <div><h2 id="mesh-step-title">Import the scan</h2><p>OBJ geometry only. The file is processed in this browser and is never uploaded.</p></div>
+              </div>
+
+              <label class="mesh-drop" id="mesh-drop" for="mesh-file">
+                <input id="mesh-file" type="file" accept=".obj,model/obj,text/plain" hidden>
+                <span class="mesh-drop-icon" aria-hidden="true">
+                  <svg viewBox="0 0 48 48"><path d="M24 31V10m0 0-8 8m8-8 8 8M10 30v7a3 3 0 0 0 3 3h22a3 3 0 0 0 3-3v-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+                <strong>Choose OBJ from Files</strong>
+                <span>or drop a mesh here on desktop</span>
+                <small>Maximum 24 MB</small>
+              </label>
+
+              <div class="mesh-file-card" id="mesh-file-card" hidden>
+                <div class="file-cube" aria-hidden="true"></div>
+                <div><strong id="mesh-file-name"></strong><span id="mesh-file-size"></span></div>
+                <button type="button" id="remove-mesh" aria-label="Remove selected mesh">×</button>
+              </div>
+
+              <div class="recognition-progress" id="recognition-progress" hidden>
+                <div class="progress-row"><strong id="recognition-status">Loading Grid2d engine</strong><span id="recognition-percent">0%</span></div>
+                <div class="progress-track"><i id="recognition-bar"></i></div>
+                <p id="recognition-detail">Preparing the local WebAssembly worker…</p>
+              </div>
+
+              <div class="recognition-result" id="recognition-result" hidden>
+                <span class="result-check">✓</span>
+                <div><strong>Geometry fingerprint complete</strong><p><b id="recognition-hash-count">0</b> recognition hashes · <span id="recognition-time"></span></p></div>
+                <button class="hash-toggle" id="show-hashes" type="button">Inspect</button>
+              </div>
+              <pre class="hash-list" id="recognition-hashes" hidden></pre>
+
+              <div class="source-guidance">
+                <strong>On iPhone</strong>
+                <ol>
+                  <li>Scan the complete object with a LiDAR or photogrammetry app.</li>
+                  <li>Export a closed, detailed mesh as <b>OBJ</b> to Files.</li>
+                  <li>Return here and choose that file. Use the same scanner settings for rescans.</li>
+                </ol>
+                <p>This PWA does not pretend camera photos are a 3D mesh. Recognition starts only from actual OBJ geometry.</p>
+              </div>
+
+              <div class="step-actions">
+                <button class="primary-button" id="recognize-mesh" type="button" disabled>Run local recognition <b>→</b></button>
+              </div>
+            </section>
+
+            <section class="flow-step" data-scan-step="details" aria-labelledby="details-step-title" hidden>
+              <div class="step-heading">
+                <span>02</span>
+                <div><h2 id="details-step-title">Describe the object</h2><p>Claims remain local. Only their deterministic digest is anchored.</p></div>
+              </div>
+
+              <form id="asset-form" class="asset-form" novalidate>
+                <label class="field full-field"><span>Asset name <b>Required</b></span><input id="asset-name" name="assetName" required maxlength="100" autocomplete="off" placeholder="Example: Haas VF-2 CNC Mill"></label>
+                <label class="field"><span>Asset class <b>Required</b></span><select id="asset-class" name="assetClass" required><option value="">Choose class</option><option value="equipment">Equipment</option><option value="vehicle">Vehicle</option><option value="machine">Machine</option><option value="agriculture">Agriculture</option><option value="infrastructure">Infrastructure</option><option value="inventory">Inventory</option><option value="other">Other</option></select></label>
+                <label class="field"><span>Manufacturer</span><input id="manufacturer" name="manufacturer" maxlength="80" autocomplete="organization" placeholder="Optional"></label>
+                <label class="field"><span>Model</span><input id="asset-model" name="model" maxlength="80" autocomplete="off" placeholder="Optional"></label>
+                <label class="field"><span>Serial or identifier</span><input id="serial-number" name="serialNumber" maxlength="100" autocomplete="off" placeholder="Optional"></label>
+                <label class="field full-field"><span>Current location</span><input id="asset-location" name="location" maxlength="120" autocomplete="off" placeholder="City, facility, or site — optional"></label>
+                <label class="field full-field"><span>Evidence note</span><textarea id="asset-note" name="note" maxlength="600" rows="4" placeholder="Inspection context, source, or visible condition — optional"></textarea></label>
+
+                <div class="photo-field full-field">
+                  <div><strong>Evidence photo</strong><span>Optional · compressed and stored only on this device</span></div>
+                  <label class="photo-button" for="evidence-photo">Use camera or Photos</label>
+                  <input id="evidence-photo" type="file" accept="image/*" capture="environment" hidden>
+                  <div class="photo-preview" id="photo-preview" hidden><img id="photo-image" alt="Selected evidence preview"><button id="remove-photo" type="button">Remove</button></div>
+                </div>
+
+                <label class="review-check full-field"><input id="claim-review" type="checkbox" required><span><b>I reviewed these claims.</b> A geometry match does not prove legal ownership, title, custody, condition, authenticity, or value.</span></label>
+
+                <div class="form-message full-field" id="asset-form-message" role="alert" aria-live="polite"></div>
+                <div class="step-actions full-field">
+                  <button class="secondary-button" type="button" data-scan-back="mesh">Back</button>
+                  <button class="primary-button" type="submit">Create local passport <b>→</b></button>
+                </div>
+              </form>
+            </section>
+
+            <section class="flow-step" data-scan-step="anchor" aria-labelledby="anchor-step-title" hidden>
+              <div class="step-heading">
+                <span>03</span>
+                <div><h2 id="anchor-step-title">Review and anchor</h2><p>The passport already exists locally. Anchoring publishes only fixed-length digests and a resolver URL.</p></div>
+              </div>
+
+              <article class="anchor-review-card">
+                <div class="anchor-card-top"><span class="passport-class-badge" id="review-class">Asset</span><span id="review-state">Local draft</span></div>
+                <h3 id="review-name">Object passport</h3>
+                <dl>
+                  <div><dt>Passport ID</dt><dd id="review-passport-id"></dd></div>
+                  <div><dt>Source SHA-256</dt><dd id="review-source-digest"></dd></div>
+                  <div><dt>Grid2d hashes</dt><dd id="review-hash-count"></dd></div>
+                  <div><dt>Network</dt><dd>Robinhood Chain Testnet · 46630</dd></div>
+                </dl>
+              </article>
+
+              <div class="privacy-callout">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10V7a5 5 0 0 1 10 0v3m-9 0h8a2 2 0 0 1 2 2v7H6v-7a2 2 0 0 1 2-2Z" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+                <div><strong>What leaves this device</strong><p>Passport ID, manifest digest, physical-claim digest, method digest, and public resolver URL. The OBJ, photo, serial, location, and notes remain local.</p></div>
+              </div>
+
+              <div class="anchor-status" id="anchor-status" hidden role="status" aria-live="polite"></div>
+              <div class="step-actions anchor-actions">
+                <button class="secondary-button" type="button" id="finish-locally">Finish without anchoring</button>
+                <button class="primary-button" type="button" id="anchor-passport">Connect Robinhood Wallet <b>→</b></button>
+              </div>
+            </section>
+          </div>
+
+          <aside class="flow-aside">
+            <div class="aside-card">
+              <span class="aside-kicker">Recognition profile</span>
+              <dl><div><dt>Algorithm</dt><dd>grid2d_v3a</dd></div><div><dt>Grid</dt><dd>8</dd></div><div><dt>Sections</dt><dd>12</dd></div><div><dt>Depth</dt><dd>10</dd></div><div><dt>Engine</dt><dd>3DPass p3d</dd></div></dl>
+              <a href="https://github.com/3Dpass/p3d" target="_blank" rel="noopener noreferrer">Inspect upstream source ↗</a>
+            </div>
+            <p class="aside-note">Recognition is deterministic for identical OBJ bytes and designed for repeat scans. Real-world match quality still depends on scan coverage, mesh quality, and consistent parameters.</p>
+          </aside>
+        </div>
+      </section>
+
+      <section class="app-screen flow-screen" data-screen="verify" aria-labelledby="verify-title" hidden>
+        <header class="flow-header">
+          <button class="back-button" type="button" data-go="home" aria-label="Back to wallet">←</button>
+          <div><p class="eyebrow">Repeat recognition</p><h1 id="verify-title">Verify a rescan</h1></div>
+          <span class="step-count">Local comparison</span>
+        </header>
+
+        <div class="verify-layout">
+          <div class="verify-panel">
+            <div class="step-heading"><span>01</span><div><h2>Choose a passport</h2><p>The reference fingerprint comes from your local wallet.</p></div></div>
+            <label class="field full-field"><span>Reference passport</span><select id="verify-passport"><option value="">Choose a passport</option></select></label>
+            <div class="reference-summary" id="reference-summary" hidden></div>
+          </div>
+          <div class="verify-panel">
+            <div class="step-heading"><span>02</span><div><h2>Import the new OBJ</h2><p>Use the same scanner and export settings where possible.</p></div></div>
+            <label class="compact-drop" for="verify-file"><input id="verify-file" type="file" accept=".obj,model/obj,text/plain" hidden><span>Choose rescan OBJ</span><small id="verify-file-name">No file selected</small></label>
+            <button class="primary-button full-button" id="run-verification" type="button" disabled>Compare Grid2d hashes <b>→</b></button>
+          </div>
+          <article class="verification-outcome" id="verification-outcome" hidden aria-live="polite"></article>
+        </div>
+      </section>
+
+      <section class="app-screen flow-screen" data-screen="settings" aria-labelledby="settings-title" hidden>
+        <header class="flow-header">
+          <button class="back-button" type="button" data-go="home" aria-label="Back to wallet">←</button>
+          <div><p class="eyebrow">Wallet controls</p><h1 id="settings-title">Security and backup</h1></div>
+        </header>
+
+        <div class="settings-grid">
+          <section class="settings-card">
+            <span class="settings-icon">W</span><div><h2>Wallet signer</h2><p id="settings-wallet-state">Not connected. Every transaction requires explicit approval in your wallet.</p><button class="secondary-button" id="settings-connect-wallet" type="button">Connect a wallet</button></div>
+          </section>
+          <section class="settings-card">
+            <span class="settings-icon">B</span><div><h2>Encrypted-device boundary</h2><p>This PWA stores passport records in this browser's IndexedDB. The phone's passcode and iOS app isolation protect the device; use a wallet export for recovery.</p><div class="settings-actions"><button class="secondary-button" id="export-wallet" type="button">Export wallet data</button><label class="secondary-button file-button" for="import-wallet">Restore export</label><input id="import-wallet" type="file" accept="application/json,.json" hidden></div></div>
+          </section>
+          <section class="settings-card">
+            <span class="settings-icon">N</span><div><h2>Network</h2><dl class="network-details"><div><dt>Chain</dt><dd>Robinhood Chain Testnet</dd></div><div><dt>Chain ID</dt><dd>46630</dd></div><div><dt>RPC</dt><dd>rpc.testnet.chain.robinhood.com</dd></div></dl></div>
+          </section>
+          <section class="settings-card caution-card">
+            <span class="settings-icon">!</span><div><h2>Independent application</h2><p>RWA Passport is not sponsored, operated, or endorsed by Robinhood or 3DPass. Testnet ETH has no monetary value. Never paste a seed phrase or private key into this app.</p></div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Wallet navigation">
+      <button class="is-active" type="button" data-nav="home"><span class="nav-icon nav-home"></span><b>Wallet</b></button>
+      <button type="button" data-nav="scan"><span class="nav-icon nav-scan"></span><b>Scan</b></button>
+      <button type="button" data-nav="verify"><span class="nav-icon nav-verify"></span><b>Verify</b></button>
+      <button type="button" data-nav="settings"><span class="nav-icon nav-settings"></span><b>Settings</b></button>
+    </nav>
+  </div>
+
+  <dialog class="passport-dialog" id="passport-dialog">
+    <form method="dialog"><button class="dialog-close" aria-label="Close passport details">×</button></form>
+    <div id="passport-dialog-content"></div>
+  </dialog>
+
+  <dialog class="wallet-dialog" id="wallet-dialog">
+    <form method="dialog"><button class="dialog-close" aria-label="Close wallet connection">×</button></form>
+    <div class="dialog-heading"><span class="dialog-brand">W</span><div><p class="eyebrow">Authorized signer</p><h2>Connect a wallet</h2></div></div>
+    <p>Use Robinhood Wallet or another EVM wallet that can approve Robinhood Chain Testnet (46630). This app requests only your public address and transaction approvals; it never receives your keys.</p>
+    <button class="primary-button full-button" id="connect-walletconnect" data-wallet-connector type="button">Choose mobile or QR wallet <b>→</b></button>
+    <section class="wallet-provider-section" aria-labelledby="browser-wallet-title">
+      <div class="wallet-provider-heading">
+        <strong id="browser-wallet-title">Browser wallets</strong>
+        <button class="wallet-provider-refresh" id="refresh-browser-wallets" type="button">Refresh</button>
+      </div>
+      <div class="wallet-provider-list" id="browser-wallet-list" aria-live="polite">
+        <p class="wallet-provider-empty">Open this panel to detect installed browser wallets.</p>
+      </div>
+    </section>
+    <div class="wallet-help" id="wallet-help">
+      <strong>One network, your wallet choice</strong>
+      <p>WalletConnect works on iPhone and shows a QR code on desktop. Browser extensions appear above when detected. Your wallet may ask to add or switch to Robinhood Chain Testnet before connecting.</p>
+      <a href="https://robinhood.com/us/en/support/articles/connect-to-dapps/" target="_blank" rel="noopener noreferrer">Robinhood connection guide ↗</a>
+    </div>
+    <div class="dialog-message" id="wallet-dialog-message" role="alert" aria-live="polite"></div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

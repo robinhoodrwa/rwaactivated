@@ -1,0 +1,9 @@
+node_modules/
+dist/
+dist-ios/
+ios/App/Pods/
+ios/DerivedData/
+.wrangler/
+.env
+.env.*
+*.log

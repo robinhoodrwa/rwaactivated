@@ -257,3 +257,29 @@ if (evidenceLinterForm && manifestInput && evidenceApi) {
   manifestInput.value = JSON.stringify(evidenceApi.sampleManifest(), null, 2);
   runEvidencePreflight();
 }
+
+const scanStepButtons = [...document.querySelectorAll("[data-scan-step]")];
+const storyInstruction = document.querySelector("[data-story-instruction]");
+const storyCoverage = document.querySelector("[data-story-coverage]");
+const storyProgress = document.querySelector("[data-story-progress]");
+
+function activateScanStep(button) {
+  if (!button) return;
+  for (const candidate of scanStepButtons) {
+    candidate.classList.toggle("is-active", candidate === button);
+  }
+
+  const progress = Math.max(0, Math.min(1, Number(button.dataset.scanStep) || 0));
+  if (storyInstruction) storyInstruction.textContent = button.dataset.instruction || "";
+  if (storyCoverage) storyCoverage.textContent = button.dataset.coverage || `${Math.round(progress * 100)}%`;
+  if (storyProgress) storyProgress.style.width = `${Math.round(progress * 100)}%`;
+  document.dispatchEvent(new CustomEvent("rwa:scan-progress", {
+    detail: { target: ".story-canvas", progress },
+  }));
+}
+
+for (const button of scanStepButtons) {
+  button.addEventListener("click", () => activateScanStep(button));
+}
+
+if (scanStepButtons.length) activateScanStep(scanStepButtons.find((button) => button.classList.contains("is-active")) || scanStepButtons[0]);

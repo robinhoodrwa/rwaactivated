@@ -1,0 +1,19 @@
+{
+  "name": "rwa-activated-product-suite",
+  "private": true,
+  "scripts": {
+    "build": "node build-site.mjs",
+    "build:walletconnect": "esbuild wallet/walletconnect-entry.js --bundle --format=esm --platform=browser --target=es2022 --minify --outfile=wallet/vendor/walletconnect.min.js",
+    "test": "node --test evidence-linter.test.js wallet-connection.test.mjs"
+  },
+  "dependencies": {
+    "@capacitor/core": "^8.4.2",
+    "@capacitor/ios": "^8.4.2",
+    "@walletconnect/ethereum-provider": "2.23.10"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "^8.4.2",
+    "esbuild": "0.25.6"
+  }
+}
