@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#071012">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="Verify an RWA evidence passport across structural validity, signatures, rights, custody, source availability, physical identity, and chain state.">
+  <title>RWA Passport Verifier — Interactive prototype</title>
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../styles.css">
+  <script src="../product-data.js" defer></script>
+  <script src="../evidence-linter.js" defer></script>
+  <script src="verify.js" defer></script>
+</head>
+<body class="product-body verify-body">
+  <a class="skip-link" href="#verify-main">Skip to verifier</a>
+
+  <header class="product-preview-bar verify-preview-bar">
+    <a class="brand" href="../" aria-label="RWA Protocol home">
+      <svg class="brand-mark" viewBox="0 0 44 44" aria-hidden="true"><path d="M5 11.5 22 2l17 9.5v21L22 42 5 32.5z"></path><path d="M13 16.2 22 11l9 5.2v10.6L22 32l-9-5.2z"></path><circle cx="22" cy="21.5" r="3.5"></circle></svg>
+      <span class="brand-name">RWA<span>Verify</span></span>
+    </a>
+    <div class="preview-context"><span class="preview-dot"></span>Interactive prototype · sample data</div>
+    <nav aria-label="Product previews"><a href="../">Website</a><a href="../wallet/">Wallet</a><a href="../studio/">Studio</a><a class="is-active" href="./">Verifier</a></nav>
+  </header>
+
+  <header class="verify-app-header">
+    <div class="verify-app-brand"><span class="verify-mark">✓</span><div><b>Passport Verifier</b><small>Public, read-only verification</small></div></div>
+    <nav aria-label="Verifier navigation"><button class="is-active" type="button" data-verifier-view="verify">Verify</button><button type="button" data-verifier-view="results">Results</button><button type="button" data-verifier-view="watchlist">Watchlist <span data-watch-count>0</span></button><button type="button" data-verifier-view="exports">Exports</button></nav>
+    <div class="verify-network"><i></i><span>Robinhood Testnet</span><button type="button" data-network-menu>⌄</button></div>
+  </header>
+
+  <main class="verify-main" id="verify-main">
+    <section class="verify-search-view" data-verifier-panel="verify" aria-labelledby="verify-title">
+      <div class="verify-hero">
+        <span class="section-index">Public verification</span>
+        <h1 id="verify-title">Verify the object.<br><span>Inspect every claim.</span></h1>
+        <p>Paste a passport link, object ID, or manifest fingerprint. RWA Verify separates what passed, what needs judgment, and what is unavailable.</p>
+        <form class="verify-search" data-verify-form>
+          <label class="sr-only" for="passport-query">Passport link, object ID, or manifest fingerprint</label>
+          <span class="search-symbol" aria-hidden="true">⌕</span>
+          <input id="passport-query" name="passport" required autocomplete="off" spellcheck="false" value="rwa:equipment:atlas-hx320:8f21" placeholder="Passport link, object ID, or fingerprint">
+          <button class="qr-button" type="button" data-scan-qr aria-label="Scan a passport QR code"><span></span></button>
+          <button class="verify-submit" type="submit">Verify passport <span>→</span></button>
+        </form>
+        <div class="search-examples"><span>Try the working demo:</span><button type="button" data-load-demo>Atlas HX-320 · Revision 7</button><button type="button" data-load-invalid>Unknown object</button></div>
+        <div class="verify-boundaries"><span><i>✓</i> No account required</span><span><i>✓</i> Read-only</span><span><i>✓</i> Dated result</span><span><i>✓</i> Sources stay separate</span></div>
+      </div>
+    </section>
+
+    <section class="verification-result" data-verification-result aria-labelledby="result-title" hidden>
+      <div class="result-toolbar"><button type="button" data-back-to-search><span>←</span> New verification</button><div><button type="button" data-watch-passport><span>＋</span> Add to watchlist</button><button type="button" data-export-verification><span>↓</span> Export dated report</button></div></div>
+
+      <div class="result-object-header">
+        <span class="result-object-mark">HX</span>
+        <div><span class="result-kicker">TRACKED EXCAVATOR · RWA-2048</span><h1 id="result-title">Atlas HX-320 Excavator</h1><p>HX320-24-008F21 · Dallas, Texas</p></div>
+        <div class="result-revision"><span>Current revision</span><b>7</b><small>Anchored 4m ago</small></div>
+      </div>
+
+      <section class="verification-summary" aria-labelledby="summary-title">
+        <div class="summary-orbit" aria-hidden="true"><span>✓</span><i></i><i></i><i></i></div>
+        <div class="summary-copy"><span class="summary-state">VERIFICATION COMPLETE</span><h2 id="summary-title">Passport verified<br><em>with one caution.</em></h2><p>The manifest is structurally valid, required signatures resolve, and the anchor matches revision 7. One time-sensitive insurance claim needs review.</p></div>
+        <div class="summary-counts"><div><b data-pass-count>6</b><span>Passed</span></div><div class="is-caution"><b data-caution-count>1</b><span>Caution</span></div><div><b data-fail-count>0</b><span>Failed</span></div></div>
+        <div class="summary-timestamp"><span>Verified at</span><b data-verified-time>July 16, 2026 · 1:42 PM CDT</b><small>Result changes when sources, signatures, or chain state change.</small></div>
+      </section>
+
+      <section class="result-section decision-section" aria-labelledby="decision-title">
+        <div class="result-section-heading"><div><span class="section-index">Decision view</span><h2 id="decision-title">What the record establishes</h2></div><p>Each dimension is independent. A passing scan cannot substitute for rights, custody, or source accountability.</p></div>
+        <div class="decision-grid">
+          <article class="decision-card is-pass" data-decision="structure"><div class="decision-icon">✓</div><span>Structural validity</span><h3>Passed</h3><p>Schema, required fields, source digests, and deterministic canonicalization passed.</p><button type="button" data-open-decision="structure">7 checks <i>›</i></button></article>
+          <article class="decision-card is-pass" data-decision="identity"><div class="decision-icon">✓</div><span>Physical identity</span><h3>Passed</h3><p>Grid2d result resolves to its source capture, method, parameters, and version.</p><button type="button" data-open-decision="identity">99.2% confidence <i>›</i></button></article>
+          <article class="decision-card is-pass" data-decision="signatures"><div class="decision-icon">✓</div><span>Signatures</span><h3>Passed</h3><p>Required issuer, custodian, and inspector signatures are current and resolvable.</p><button type="button" data-open-decision="signatures">5 signatures <i>›</i></button></article>
+          <article class="decision-card is-pass" data-decision="rights"><div class="decision-icon">✓</div><span>Rights &amp; custody</span><h3>Passed</h3><p>Rights and custody claims are present, current, and attributed to separate signers.</p><button type="button" data-open-decision="rights">2 accountable claims <i>›</i></button></article>
+          <article class="decision-card is-caution" data-decision="sources"><div class="decision-icon">!</div><span>Source availability</span><h3>Caution</h3><p>The insurance source resolves, but the attached policy expires in 29 days.</p><button type="button" data-open-decision="sources">1 expiring source <i>›</i></button></article>
+          <article class="decision-card is-pass" data-decision="anchor"><div class="decision-icon">✓</div><span>Chain state</span><h3>Passed</h3><p>Revision 7 fingerprint matches the finalized Robinhood Testnet anchor.</p><button type="button" data-open-decision="anchor">48 confirmations <i>›</i></button></article>
+        </div>
+      </section>
+
+      <section class="result-section evidence-result-section" aria-labelledby="evidence-result-title">
+        <div class="result-section-heading"><div><span class="section-index">Accountable claims</span><h2 id="evidence-result-title">Evidence behind the result</h2></div><div class="result-filter"><button class="is-active" type="button" data-claim-filter="all">All 7</button><button type="button" data-claim-filter="verified">Passed 6</button><button type="button" data-claim-filter="warning">Caution 1</button></div></div>
+        <div class="claim-result-list" data-claim-results></div>
+      </section>
+
+      <div class="result-two-column">
+        <section class="result-section object-facts-section" aria-labelledby="object-facts-title">
+          <div class="result-section-heading"><div><span class="section-index">Object state</span><h2 id="object-facts-title">Passport facts</h2></div></div>
+          <dl class="object-facts">
+            <div><dt>Object ID</dt><dd>rwa:equipment:atlas-hx320:8f21 <button type="button" data-copy-value="rwa:equipment:atlas-hx320:8f21">Copy</button></dd></div>
+            <div><dt>Passport fingerprint</dt><dd>79d1c4b8…ad0c8f21 <button type="button" data-copy-value="sha256:79d1c4b803a2f0e7e98a2d48b9d9c6f3a8e7082dc89c9d3fd5ec5ad4ad0c8f21">Copy</button></dd></div>
+            <div><dt>Controller</dt><dd>0x71C2…09A4</dd></div>
+            <div><dt>Custodian</dt><dd>Northline Equipment Services</dd></div>
+            <div><dt>Network</dt><dd><span class="network-fact"><i></i> Robinhood Testnet</span></dd></div>
+            <div><dt>Anchor transaction</dt><dd>0x9c41…d882</dd></div>
+          </dl>
+        </section>
+
+        <section class="result-section revision-section" aria-labelledby="revision-title">
+          <div class="result-section-heading"><div><span class="section-index">Revision history</span><h2 id="revision-title">Recent events</h2></div><button type="button" data-view-full-history>Full history</button></div>
+          <div class="revision-timeline" data-verifier-timeline></div>
+        </section>
+      </div>
+
+      <aside class="verification-boundary"><span>What this result does not prove</span><p>A verified passport does not by itself establish legal title, market value, current physical custody, regulatory status, or authenticity. It shows which claims and sources passed the stated checks at the time above.</p></aside>
+    </section>
+
+    <section class="verification-empty-panel" data-verifier-panel="results" hidden><span class="empty-panel-icon">⌕</span><h2>Recent results</h2><p>Your verification history stays in this browser. Verify the demo passport to add a dated result.</p><button type="button" data-verifier-view="verify">Verify a passport</button></section>
+    <section class="verification-empty-panel" data-verifier-panel="watchlist" hidden><span class="empty-panel-icon">☆</span><h2 data-watchlist-title>No passports watched</h2><p data-watchlist-copy>Add a verified passport to see expiry, revision, and revocation changes here.</p><button type="button" data-verifier-view="verify">Open verifier</button></section>
+    <section class="verification-empty-panel" data-verifier-panel="exports" hidden><span class="empty-panel-icon">↓</span><h2>Verification exports</h2><p>Dated reports generated in this prototype download directly to your device. Nothing is uploaded.</p><button type="button" data-export-verification>Download demo report</button></section>
+
+    <section class="verification-failure" data-verification-failure hidden aria-labelledby="failure-title">
+      <div class="failure-orbit"><span>×</span></div><span class="failure-state">NOT FOUND</span><h1 id="failure-title">Passport could not be resolved.</h1><p>No public passport matches <code data-failure-query></code>. Check the identifier or inspect a manifest locally before making a decision.</p><div><button type="button" data-load-demo>Load working demo</button><button type="button" data-back-to-search>Try another identifier</button></div>
+    </section>
+  </main>
+
+  <dialog class="decision-dialog" data-decision-dialog>
+    <form method="dialog"><span data-decision-dialog-label>Verification details</span><button aria-label="Close details">×</button></form>
+    <div data-decision-dialog-content></div>
+  </dialog>
+
+  <dialog class="qr-dialog" data-qr-dialog>
+    <form method="dialog"><span>Scan passport QR</span><button aria-label="Close QR scanner">×</button></form>
+    <div class="qr-camera"><span></span><i></i><i></i><i></i><i></i><div class="qr-demo-code" aria-hidden="true"></div></div><p>Camera access is simulated in this browser prototype.</p><button type="button" data-use-demo-qr>Use demo QR</button>
+  </dialog>
+
+  <div class="product-toast" role="status" aria-live="polite" data-verifier-toast></div>
+</body>
+</html>

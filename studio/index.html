@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#071012">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="RWA Operator Studio turns asset capture, evidence, accountable signatures, and passport anchoring into one focused work queue.">
+  <title>RWA Operator Studio — Interactive prototype</title>
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../styles.css">
+  <script src="../product-data.js" defer></script>
+  <script src="studio.js" defer></script>
+</head>
+<body class="product-body studio-body">
+  <a class="skip-link" href="#studio-main">Skip to studio</a>
+
+  <header class="product-preview-bar studio-preview-bar">
+    <a class="brand" href="../" aria-label="RWA Protocol home">
+      <svg class="brand-mark" viewBox="0 0 44 44" aria-hidden="true"><path d="M5 11.5 22 2l17 9.5v21L22 42 5 32.5z"></path><path d="M13 16.2 22 11l9 5.2v10.6L22 32l-9-5.2z"></path><circle cx="22" cy="21.5" r="3.5"></circle></svg>
+      <span class="brand-name">RWA<span>Studio</span></span>
+    </a>
+    <div class="preview-context"><span class="preview-dot"></span>Interactive prototype · sample data</div>
+    <nav aria-label="Product previews"><a href="../">Website</a><a href="../wallet/">Wallet</a><a class="is-active" href="./">Studio</a><a href="../verify/">Verifier</a></nav>
+  </header>
+
+  <div class="studio-shell">
+    <aside class="studio-sidebar" data-studio-sidebar>
+      <div class="studio-tenant">
+        <span class="tenant-mark">RW</span>
+        <div><b>Real World Activated</b><small>Operator workspace</small></div>
+        <button type="button" aria-label="Switch workspace">⌄</button>
+      </div>
+      <nav class="studio-nav" aria-label="Studio navigation">
+        <button class="is-active" type="button" data-studio-nav="home"><span class="nav-icon nav-home"></span><b>Home</b><i>4</i></button>
+        <button type="button" data-studio-nav="assets"><span class="nav-icon nav-assets"></span><b>Assets</b><i>1,284</i></button>
+        <button type="button" data-studio-nav="evidence"><span class="nav-icon nav-evidence"></span><b>Evidence</b><i>12</i></button>
+        <button type="button" data-studio-nav="activity"><span class="nav-icon nav-activity"></span><b>Activity</b></button>
+        <button type="button" data-studio-nav="team"><span class="nav-icon nav-team"></span><b>Team</b></button>
+      </nav>
+      <div class="studio-sidebar-bottom">
+        <a href="../verify/"><span class="nav-icon nav-verify"></span><b>Public verifier</b><i>↗</i></a>
+        <a href="https://github.com/robinhoodrwa/3DP/tree/rwa-object-protocol/rwa-object-protocol" target="_blank" rel="noopener noreferrer"><span class="nav-icon nav-code"></span><b>Developer tools</b><i>↗</i></a>
+        <button type="button" data-studio-action="settings"><span class="studio-user">RA</span><span><b>RWA Admin</b><small>Admin</small></span><i>•••</i></button>
+      </div>
+    </aside>
+
+    <main class="studio-main" id="studio-main">
+      <header class="studio-topbar">
+        <button class="studio-mobile-menu" type="button" data-sidebar-toggle aria-expanded="false" aria-label="Open studio navigation"><span></span><span></span><span></span></button>
+        <div class="studio-breadcrumb"><span>Real World Activated</span><i>/</i><b data-view-breadcrumb>Home</b></div>
+        <div class="studio-top-actions">
+          <button class="icon-button" type="button" data-studio-action="search" aria-label="Search">⌕</button>
+          <button class="icon-button notification-button" type="button" data-studio-action="notifications" aria-label="Notifications">◦<i></i></button>
+          <button class="studio-primary-button" type="button" data-new-passport><span>＋</span> New passport</button>
+        </div>
+      </header>
+
+      <div class="studio-content">
+        <section class="studio-view is-active" data-studio-view="home" aria-labelledby="studio-home-title">
+          <div class="view-heading">
+            <div><span class="view-kicker"><i></i> Workspace healthy</span><h1 id="studio-home-title">Good morning, operator.</h1><p>Four assets need a decision. Everything else is moving.</p></div>
+            <div class="view-heading-actions"><button type="button" data-export-report>Export report</button><span>Last synced <b>now</b></span></div>
+          </div>
+
+          <div class="metric-grid" data-metrics>
+            <article class="metric-card"><span>Active passports</span><b data-metric="activePassports">—</b><small><i class="trend-up">↗ 8.4%</i> from last month</small><div class="metric-spark is-green" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></article>
+            <article class="metric-card"><span>Anchored this week</span><b data-metric="anchoredThisWeek">—</b><small><i class="trend-up">↗ 12</i> versus prior week</small><div class="metric-spark is-blue" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></article>
+            <article class="metric-card has-attention"><span>Needs attention</span><b data-metric="needsAttention">—</b><small><i>4 decisions</i> due today</small><div class="metric-ring" aria-hidden="true"><span></span><b>12</b></div></article>
+            <article class="metric-card"><span>Verification rate</span><b><span data-metric="verificationRate">—</span><em>%</em></b><small><i class="trend-up">↗ 0.8%</i> 30-day average</small><div class="metric-ring is-rate" aria-hidden="true"><span></span><b>98.7</b></div></article>
+          </div>
+
+          <section class="studio-panel work-panel" aria-labelledby="work-queue-title">
+            <div class="panel-heading"><div><h2 id="work-queue-title">Work queue</h2><p>What needs a human decision next</p></div><div class="panel-tabs" role="tablist" aria-label="Work queue filter"><button class="is-active" type="button" data-queue-filter="all">All <span>4</span></button><button type="button" data-queue-filter="warning">Due soon</button><button type="button" data-queue-filter="danger">Failed</button></div></div>
+            <div class="data-table work-table" role="table" aria-label="Work queue">
+              <div class="table-head" role="row"><span role="columnheader">Asset</span><span role="columnheader">Next action</span><span role="columnheader">Status</span><span role="columnheader">Owner</span><span role="columnheader">Age</span><span></span></div>
+              <div data-work-queue></div>
+            </div>
+          </section>
+
+          <div class="studio-home-grid">
+            <section class="studio-panel health-panel" aria-labelledby="health-title">
+              <div class="panel-heading"><div><h2 id="health-title">Evidence health</h2><p>Current claim coverage</p></div><button class="panel-menu" type="button" data-studio-action="health-menu">•••</button></div>
+              <div class="health-chart">
+                <div class="health-donut" aria-label="92 percent of evidence current"><span><b>92%</b><small>current</small></span></div>
+                <ul><li><i class="is-current"></i><span>Current</span><b>1,181</b></li><li><i class="is-expiring"></i><span>Expiring soon</span><b>72</b></li><li><i class="is-missing"></i><span>Missing</span><b>19</b></li><li><i class="is-revoked"></i><span>Revoked</span><b>12</b></li></ul>
+              </div>
+            </section>
+            <section class="studio-panel anchored-panel" aria-labelledby="anchored-title">
+              <div class="panel-heading"><div><h2 id="anchored-title">Recently anchored</h2><p>Latest finalized passport revisions</p></div><button type="button" data-studio-nav="activity">View activity</button></div>
+              <div class="anchored-list"><button type="button" data-asset-id="RWA-2048"><span class="asset-tile is-amber">HX</span><div><b>Atlas HX-320 Excavator</b><small>Revision 7 · 4m ago</small></div><em>Finalized</em><i>›</i></button><button type="button" data-asset-id="RWA-2039"><span class="asset-tile is-green">D6</span><div><b>Caterpillar D6 XE</b><small>Revision 4 · 1d ago</small></div><em>Finalized</em><i>›</i></button><button type="button" data-asset-id="RWA-2027"><span class="asset-tile is-blue">CR</span><div><b>Grove GRT8100 Crane</b><small>Revision 11 · 2d ago</small></div><em>Finalized</em><i>›</i></button></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="studio-view" data-studio-view="assets" aria-labelledby="assets-view-title" hidden>
+          <div class="view-heading compact-heading"><div><span class="view-kicker">Object registry</span><h1 id="assets-view-title">Assets</h1><p>Every passport and its current evidence state.</p></div><button class="studio-primary-button" type="button" data-new-passport><span>＋</span> New passport</button></div>
+          <section class="studio-panel asset-registry-panel">
+            <div class="registry-tools"><label><span class="sr-only">Search assets</span><i>⌕</i><input type="search" placeholder="Search ID, object, serial, or location" data-asset-search></label><select data-status-filter aria-label="Filter by status"><option value="all">All statuses</option><option value="Anchored">Anchored</option><option value="Needs signature">Needs signature</option><option value="Failed verification">Failed verification</option><option value="Ready to anchor">Ready to anchor</option><option value="Expired">Expired</option></select><button type="button" data-studio-action="filters">Filters <span>0</span></button></div>
+            <div class="data-table asset-table" role="table" aria-label="Asset registry"><div class="table-head" role="row"><span role="columnheader">Asset</span><span role="columnheader">Class</span><span role="columnheader">Status</span><span role="columnheader">Evidence</span><span role="columnheader">Location</span><span role="columnheader">Updated</span><span></span></div><div data-asset-table></div></div>
+            <div class="table-footer"><span data-asset-count>0 assets</span><div><button type="button" disabled>‹</button><b>1</b><button type="button">›</button></div></div>
+          </section>
+        </section>
+
+        <section class="studio-view" data-studio-view="evidence" aria-labelledby="evidence-view-title" hidden>
+          <div class="view-heading compact-heading"><div><span class="view-kicker">Accountable claims</span><h1 id="evidence-view-title">Evidence</h1><p>Source availability, expiry, signatures, and failed checks.</p></div><button type="button" data-studio-action="evidence-policy">Evidence policy</button></div>
+          <div class="evidence-summary-grid"><article><span>Current</span><b>1,181</b><small>91.9% of claims</small></article><article class="is-warning"><span>Expires in 30 days</span><b>72</b><small>Across 41 passports</small></article><article class="is-danger"><span>Failed checks</span><b>7</b><small>Needs resolution</small></article><article><span>Waiting signature</span><b>19</b><small>5 accountable parties</small></article></div>
+          <section class="studio-panel evidence-list-panel"><div class="panel-heading"><div><h2>Evidence requiring action</h2><p>Ordered by urgency and consequence</p></div><select aria-label="Evidence time range"><option>Next 30 days</option><option>Next 90 days</option></select></div><div class="evidence-action-list"><button type="button" data-asset-id="RWA-2057"><span class="evidence-type is-danger">×</span><div><b>Source digest mismatch</b><p>Haas VF-4 Mill · physical identity source</p></div><em>Failed</em><small>18m</small><i>›</i></button><button type="button" data-asset-id="RWA-2048"><span class="evidence-type is-warning">!</span><div><b>Insurance policy expiring</b><p>Atlas HX-320 · Prairie Mutual</p></div><em>29 days</em><small>4m</small><i>›</i></button><button type="button" data-asset-id="RWA-2051"><span class="evidence-type">✎</span><div><b>Inspector signature waiting</b><p>Kenworth T680 · condition report</p></div><em>Waiting</em><small>2h</small><i>›</i></button></div></section>
+        </section>
+
+        <section class="studio-view" data-studio-view="activity" aria-labelledby="activity-view-title" hidden>
+          <div class="view-heading compact-heading"><div><span class="view-kicker">Append-only history</span><h1 id="activity-view-title">Activity</h1><p>Every capture, signature, anchor, revision, and revocation.</p></div><button type="button" data-export-report>Export log</button></div>
+          <section class="studio-panel audit-panel"><div class="audit-date">TODAY · JULY 16</div><div class="audit-list" data-audit-list></div></section>
+        </section>
+
+        <section class="studio-view" data-studio-view="team" aria-labelledby="team-view-title" hidden>
+          <div class="view-heading compact-heading"><div><span class="view-kicker">Workspace access</span><h1 id="team-view-title">Team</h1><p>Roles define who can capture, attest, review, and anchor.</p></div><button class="studio-primary-button" type="button" data-studio-action="invite"><span>＋</span> Invite member</button></div>
+          <section class="studio-panel team-panel"><div class="team-list"><div><span class="team-avatar is-admin">RA</span><div><b>RWA Admin</b><small>Organization owner</small></div><em>Administrator</em><span class="member-state">Active</span><button type="button">•••</button></div><div><span class="team-avatar is-mei">IA</span><div><b>Independent Attester</b><small>External inspection role</small></div><em>Attester</em><span class="member-state">Active</span><button type="button">•••</button></div><div><span class="team-avatar is-ana">EO</span><div><b>Equipment Operator</b><small>Asset operator role</small></div><em>Operator</em><span class="member-state">Active</span><button type="button">•••</button></div></div><div class="role-boundary"><span>Security boundary</span><p>Anchoring requires review plus an external wallet signature. No workspace role has custody of a member's private keys.</p></div></section>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <dialog class="studio-dialog asset-dialog" data-asset-dialog>
+    <form method="dialog" class="dialog-topline"><span>Passport details</span><button aria-label="Close asset details">×</button></form>
+    <div data-asset-detail></div>
+  </dialog>
+
+  <dialog class="studio-dialog new-passport-dialog" data-new-passport-dialog>
+    <form data-new-passport-form>
+      <div class="dialog-topline"><span>Create passport draft</span><button type="button" data-close-new-passport aria-label="Close new passport form">×</button></div>
+      <div class="new-passport-heading"><span class="new-passport-icon">＋</span><h2>Start with the object</h2><p>Create a private draft. You can add capture, evidence, signatures, and an anchor later.</p></div>
+      <label>Object name<input name="name" required maxlength="80" placeholder="Example: Atlas HX-320 Excavator"></label>
+      <div class="form-grid"><label>Asset class<select name="class" required><option value="">Choose class</option><option>Equipment</option><option>Vehicle</option><option>Machine</option><option>Agriculture</option><option>Inventory</option><option>Infrastructure</option></select></label><label>Serial or identifier<input name="serial" required maxlength="60" placeholder="Manufacturer serial"></label></div>
+      <label>Current location<input name="location" required maxlength="80" placeholder="City, region"></label>
+      <div class="draft-boundary"><span>Private draft</span><p>This action does not publish, sign, anchor, mint, or transfer anything.</p></div>
+      <div class="dialog-form-actions"><button type="button" data-close-new-passport>Cancel</button><button class="studio-primary-button" type="submit">Create draft</button></div>
+    </form>
+  </dialog>
+
+  <div class="product-toast" role="status" aria-live="polite" data-studio-toast></div>
+</body>
+</html>
