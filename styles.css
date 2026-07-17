@@ -1482,8 +1482,8 @@
   .team-panel { margin-top: 27px; overflow: hidden; }
   .team-list > div { display: grid; min-height: 70px; padding: 12px 17px; grid-template-columns: 36px 1fr 110px 60px 24px; gap: 11px; align-items: center; border-bottom: 1px solid var(--line); }
   .team-avatar { display: grid; width: 34px; height: 34px; place-items: center; border-radius: 50%; background: var(--accent-soft); color: var(--accent); font-size: 7px; font-weight: 750; }
-  .team-avatar.is-mei { background: var(--blue-soft); color: var(--blue); }
-  .team-avatar.is-ana { background: var(--amber-soft); color: var(--amber); }
+  .team-avatar.is-attester { background: var(--blue-soft); color: var(--blue); }
+  .team-avatar.is-operator { background: var(--amber-soft); color: var(--amber); }
   .team-list b, .team-list small { display: block; }
   .team-list b { font-size: 8px; }
   .team-list small { color: var(--muted); font-size: 6px; }
