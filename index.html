@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#070b0a">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="RWA Protocol is building the open object layer for the tokenized world: portable physical identity, accountable evidence passports, and programmable onchain state.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="RWA Protocol — The object layer for the tokenized world">
+  <meta property="og:description" content="Tokenize the world. Start with the object.">
+  <meta property="og:url" content="https://rwaactivated.com/">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="RWA Protocol — The object layer for the tokenized world">
+  <meta name="twitter:description" content="Tokenize the world. Start with the object.">
+  <title>RWA Protocol — The object layer for the tokenized world</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script src="evidence-linter.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <div class="site-shell">
+    <header class="site-header" data-header>
+      <a class="brand" href="#top" aria-label="RWA Protocol home">
+        <svg class="brand-mark" viewBox="0 0 44 44" aria-hidden="true">
+          <path d="M5 11.5 22 2l17 9.5v21L22 42 5 32.5z"/>
+          <path d="M13 16.2 22 11l9 5.2v10.6L22 32l-9-5.2z"/>
+          <circle cx="22" cy="21.5" r="3.5"/>
+        </svg>
+        <span class="brand-name">RWA<span>Protocol</span></span>
+      </a>
+
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" data-menu-toggle>
+        <span class="sr-only">Toggle navigation</span>
+        <span></span><span></span>
+      </button>
+
+      <nav class="site-nav" id="site-nav" aria-label="Primary navigation" data-nav>
+        <a href="#protocol">Vision</a>
+        <a href="#architecture">Object layer</a>
+        <a href="#flow">How it works</a>
+        <a href="#linter">Evidence Lint</a>
+        <a href="#builders">Build</a>
+        <a class="nav-cta" href="https://github.com/robinhoodrwa/3DP/tree/rwa-object-protocol/rwa-object-protocol" target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a>
+      </nav>
+    </header>
+
+    <main id="main">
+      <section class="hero" id="top" aria-labelledby="hero-title">
+        <div class="hero-grid" aria-hidden="true"></div>
+        <div class="hero-glow" aria-hidden="true"></div>
+
+        <div class="hero-copy">
+          <div class="status-chip reveal">
+            <span class="status-pulse" aria-hidden="true"></span>
+            Open-source V4 starter · Robinhood Chain target
+          </div>
+          <p class="hero-kicker reveal">The open object layer for real-world assets</p>
+          <h1 id="hero-title" class="reveal">Tokenize the world.<br><span>Start with the object.</span></h1>
+          <p class="hero-lede reveal">RWA Protocol turns real objects into portable, verifiable digital state—binding physical identity, evidence, custody, rights, and programmable policy before markets are built above them.</p>
+          <div class="hero-actions reveal">
+            <a class="button button-primary" href="#protocol">See the protocol <span aria-hidden="true">↓</span></a>
+            <a class="button button-secondary" href="https://github.com/robinhoodrwa/3DP/tree/rwa-object-protocol/rwa-object-protocol" target="_blank" rel="noopener noreferrer">Open the code <span aria-hidden="true">↗</span></a>
+          </div>
+          <dl class="hero-metrics reveal" aria-label="Protocol priorities">
+            <div><dt>01</dt><dd>Physical identity</dd></div>
+            <div><dt>02</dt><dd>Evidence passports</dd></div>
+            <div><dt>03</dt><dd>Programmable state</dd></div>
+          </dl>
+        </div>
+
+        <div class="hero-visual reveal" aria-label="Illustration of a verified digital asset passport">
+          <div class="orbit orbit-one" aria-hidden="true"></div>
+          <div class="orbit orbit-two" aria-hidden="true"></div>
+          <div class="node node-a" aria-hidden="true"><span></span></div>
+          <div class="node node-b" aria-hidden="true"><span></span></div>
+          <div class="node node-c" aria-hidden="true"><span></span></div>
+
+          <article class="passport-card">
+            <div class="passport-topline">
+              <div>
+                <span class="micro-label">Object passport / V4 alpha</span>
+                <strong>RWA–OBJ–0001</strong>
+              </div>
+              <span class="verified-badge"><span aria-hidden="true">✓</span> Anchored</span>
+            </div>
+            <div class="asset-figure" aria-hidden="true">
+              <svg viewBox="0 0 360 172">
+                <defs>
+                  <linearGradient id="asset-fill" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0" stop-color="#b8ff6a" stop-opacity=".22"/>
+                    <stop offset="1" stop-color="#61e7c8" stop-opacity=".03"/>
+                  </linearGradient>
+                </defs>
+                <path class="asset-wire" d="M75 120 112 53l73-22 76 42 24 61-88 13z"/>
+                <path class="asset-face" d="M112 53 185 31l12 116-122-27z"/>
+                <path class="asset-face" d="m185 31 76 42 24 61-88 13z"/>
+                <path class="asset-link" d="m75 120 186-47M112 53l173 81M185 31l-110 89m122 27 64-74"/>
+                <circle cx="75" cy="120" r="4"/><circle cx="112" cy="53" r="4"/><circle cx="185" cy="31" r="4"/><circle cx="261" cy="73" r="4"/><circle cx="285" cy="134" r="4"/><circle cx="197" cy="147" r="4"/>
+              </svg>
+              <span class="scan-line"></span>
+              <span class="asset-caption">Physical identity claim</span>
+            </div>
+            <ul class="attestation-list" aria-label="Passport attestations">
+              <li><span class="attestation-icon">I</span><span><strong>Physical identity</strong><small>Grid2d claim · v3a</small></span><b>✓</b></li>
+              <li><span class="attestation-icon">E</span><span><strong>Evidence manifest</strong><small>SHA-256 · version 1</small></span><b>✓</b></li>
+              <li><span class="attestation-icon">C</span><span><strong>Controller</strong><small>Accountable · 0x73…8A2</small></span><b>✓</b></li>
+              <li><span class="attestation-icon">N</span><span><strong>Target network</strong><small>Robinhood Chain · testnet</small></span><b>✓</b></li>
+            </ul>
+            <div class="passport-footer">
+              <span><i aria-hidden="true"></i> Passport state ready</span>
+              <span>Open alpha</span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="signal-strip" aria-label="Protocol capabilities">
+        <div class="signal-track">
+          <span>Objects</span><i>◆</i><span>Identity</span><i>◆</i><span>Evidence</span><i>◆</i><span>Custody</span><i>◆</i><span>Rights</span><i>◆</i><span>Markets</span><i>◆</i><span>Finance</span><i>◆</i><span>World-scale</span>
+        </div>
+      </section>
+
+      <section class="section protocol-section" id="protocol" aria-labelledby="protocol-title">
+        <div class="section-heading reveal">
+          <p class="section-index">01 / The vision</p>
+          <h2 id="protocol-title">The world has assets.<br><span>Software still sees documents.</span></h2>
+        </div>
+        <div class="problem-layout">
+          <p class="section-intro reveal">Factories, vehicles, machines, inventory, art, and infrastructure cannot become trustworthy software while identity, evidence, rights, and custody remain trapped in disconnected files and databases.</p>
+          <div class="problem-map reveal" aria-label="Fragmented object evidence becomes one portable passport">
+            <div class="fragment-stack">
+              <span>3D scan</span>
+              <span>Serial / GTIN</span>
+              <span>Title &amp; rights</span>
+              <span>Custody event</span>
+              <span>Inspection record</span>
+            </div>
+            <div class="map-arrow" aria-hidden="true"><span></span><b>Bind<br>+ attest</b></div>
+            <div class="matterseal">
+              <svg viewBox="0 0 52 52" aria-hidden="true"><path d="m26 3 20 11.5v23L26 49 6 37.5v-23z"/><path d="m26 13 11 6.5v13L26 39l-11-6.5v-13z"/><circle cx="26" cy="26" r="4"/></svg>
+              <strong>Object passport</strong>
+              <span>Portable identity + evidence state</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section architecture-section" id="architecture" aria-labelledby="architecture-title">
+        <div class="section-heading reveal">
+          <p class="section-index">02 / The object layer</p>
+          <h2 id="architecture-title">One object layer.<br><span>Every application above it.</span></h2>
+          <p>RWA Protocol separates an object's identity and accountable evidence from any single issuer, marketplace, or chain. Establish portable state once; let many products verify and use it.</p>
+        </div>
+
+        <div class="architecture-grid">
+          <article class="architecture-card architecture-card-featured reveal">
+            <span class="card-number">01</span>
+            <div class="card-icon seal-icon" aria-hidden="true"><span></span></div>
+            <h3>Object Identity</h3>
+            <p>Bind stable identifiers and reproducible physical-recognition claims to the exact source evidence, method, parameters, and version that produced them.</p>
+            <ul>
+              <li>Physical fingerprints</li>
+              <li>Source digests</li>
+              <li>Method + version</li>
+            </ul>
+          </article>
+          <article class="architecture-card reveal">
+            <span class="card-number">02</span>
+            <div class="card-icon passport-icon" aria-hidden="true"><span></span><span></span><span></span></div>
+            <h3>Evidence Passport</h3>
+            <p>A versioned manifest for identity, title, rights, custody, condition, appraisal, compliance, and provenance claims.</p>
+            <a href="#flow">See the flow <span aria-hidden="true">→</span></a>
+          </article>
+          <article class="architecture-card reveal">
+            <span class="card-number">03</span>
+            <div class="card-icon registry-icon" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+            <h3>Passport Registry</h3>
+            <p>Resolve current object state, preserve history, revoke bad claims, and transfer administrative control without pretending control proves legal ownership.</p>
+            <a href="#flow">See the flow <span aria-hidden="true">→</span></a>
+          </article>
+          <article class="architecture-card reveal">
+            <span class="card-number">04</span>
+            <div class="card-icon sdk-icon" aria-hidden="true">{ }</div>
+            <h3>Network Adapters</h3>
+            <p>Anchor chain-neutral passports on Robinhood Chain and attach optional physical-identity claims from 3DPass or other recognition systems.</p>
+            <a href="#builders">Open the build <span aria-hidden="true">→</span></a>
+          </article>
+          <article class="architecture-card reveal">
+            <span class="card-number">05</span>
+            <div class="card-icon attest-icon" aria-hidden="true"><span>✓</span></div>
+            <h3>Policy &amp; Markets</h3>
+            <p>Let applications add transfer, financing, servicing, governance, and compliance rules above verified state instead of confusing a token with the asset itself.</p>
+            <a href="#principles">Our principles <span aria-hidden="true">→</span></a>
+          </article>
+        </div>
+      </section>
+
+      <section class="section flow-section" id="flow" aria-labelledby="flow-title">
+        <div class="section-heading reveal">
+          <p class="section-index">03 / Protocol flow</p>
+          <h2 id="flow-title">From a real object<br><span>to world-scale digital state.</span></h2>
+        </div>
+        <ol class="flow-list">
+          <li class="reveal">
+            <span class="flow-number">01</span>
+            <div><h3>Capture</h3><p>Reference scans, identifiers, title, rights, custody, inspection, provenance, and other source evidence.</p></div>
+            <span class="flow-tag">Source evidence</span>
+          </li>
+          <li class="reveal">
+            <span class="flow-number">02</span>
+            <div><h3>Identify</h3><p>Create or reuse an object identifier and record the exact recognition method, parameters, source digest, and outputs.</p></div>
+            <span class="flow-tag">Physical identity</span>
+          </li>
+          <li class="reveal">
+            <span class="flow-number">03</span>
+            <div><h3>Attest</h3><p>Require accountable parties to sign narrowly scoped claims with timestamps, authority, status, and expiry.</p></div>
+            <span class="flow-tag">Accountable claims</span>
+          </li>
+          <li class="reveal">
+            <span class="flow-number">04</span>
+            <div><h3>Anchor</h3><p>Fingerprint the versioned passport and publish resolvable state without moving every private document onchain.</p></div>
+            <span class="flow-tag">Portable state</span>
+          </li>
+          <li class="reveal">
+            <span class="flow-number">05</span>
+            <div><h3>Activate</h3><p>Let applications apply transfer, finance, governance, servicing, and compliance policy to verified object state.</p></div>
+            <span class="flow-tag">Programmable apps</span>
+          </li>
+        </ol>
+      </section>
+
+      <section class="section linter-section" id="linter" aria-labelledby="linter-title">
+        <div class="section-heading reveal">
+          <p class="section-index">04 / Live product</p>
+          <h2 id="linter-title">Make weak evidence fail<br><span>before markets can use it.</span></h2>
+          <p>Evidence Lint is the first local-first gate in the object layer. It checks identity, source accountability, content digests, custody, rights, and target networks—then produces the deterministic fingerprint a passport can anchor.</p>
+        </div>
+
+        <div class="linter-shell reveal">
+          <form class="lint-editor" id="evidence-linter-form">
+            <div class="lint-toolbar">
+              <div>
+                <span class="micro-label">Input</span>
+                <strong>Evidence passport JSON</strong>
+              </div>
+              <div class="lint-toolbar-actions">
+                <button type="button" data-lint-example>Load example</button>
+                <button type="button" data-lint-format>Format JSON</button>
+              </div>
+            </div>
+            <label class="sr-only" for="manifest-input">Evidence passport JSON</label>
+            <textarea id="manifest-input" name="manifest" spellcheck="false" autocapitalize="off" autocomplete="off" aria-describedby="manifest-privacy"></textarea>
+            <div class="lint-editor-footer">
+              <p id="manifest-privacy"><span aria-hidden="true">●</span> Runs in this browser. Nothing is uploaded or stored.</p>
+              <button class="button button-primary" type="submit" data-lint-submit>Run preflight <span aria-hidden="true">→</span></button>
+            </div>
+          </form>
+
+          <section class="lint-report" aria-labelledby="lint-report-title">
+            <div class="lint-report-head">
+              <div>
+                <span class="micro-label">Output</span>
+                <h3 id="lint-report-title">Preflight report</h3>
+              </div>
+              <span class="lint-state is-idle" data-lint-state>Waiting</span>
+            </div>
+            <div class="lint-summary" aria-live="polite">
+              <strong data-lint-summary>Load the example or paste a passport to begin.</strong>
+              <span data-lint-counts>Structural checks only</span>
+            </div>
+            <div class="lint-fingerprint">
+              <div>
+                <span>Canonical manifest fingerprint</span>
+                <code data-lint-fingerprint>Not calculated</code>
+              </div>
+              <button type="button" data-copy-fingerprint disabled>Copy</button>
+            </div>
+            <ol class="lint-results" data-lint-results>
+              <li class="is-idle"><span>–</span><div><strong>No report yet</strong><small>The linter checks evidence structure; it does not decide legal ownership or verify signatures.</small></div></li>
+            </ol>
+            <p class="lint-boundary">A passing report means the manifest is structurally ready for deeper verification. It is not proof of title, valuation, compliance, or authenticity. Signature and source verification remain separate gates.</p>
+            <div class="lint-links">
+              <a href="evidence-passport.schema.json" target="_blank" rel="noopener">Open JSON Schema <span aria-hidden="true">↗</span></a>
+              <a href="https://docs.robinhood.com/chain/building-with-stock-tokens/" target="_blank" rel="noopener noreferrer">Robinhood Chain builder docs <span aria-hidden="true">↗</span></a>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="section builders-section" id="builders" aria-labelledby="builders-title">
+        <div class="builders-panel reveal">
+          <div class="builders-copy">
+            <p class="section-index">05 / The build</p>
+            <h2 id="builders-title">World-scale vision.<br><span>Concrete code now.</span></h2>
+            <p>The first open-source starter is live in our 3DPass research fork: a Robinhood Chain passport registry, deterministic 3DPass claim codec, fixed-supply ERC-20, and testnet-only venue that applies the proposed 3% buy and 3% sell fee without taxing ordinary token transfers. It is pre-audit testnet code—not a mainnet product.</p>
+            <div class="builder-tags" aria-label="Intended builders">
+              <span>Object issuers</span><span>Equipment finance</span><span>Manufacturers</span><span>Inspectors</span><span>Custodians</span><span>Developers</span>
+            </div>
+            <a class="button button-primary" href="https://github.com/robinhoodrwa/3DP/tree/rwa-object-protocol/rwa-object-protocol" target="_blank" rel="noopener noreferrer">Open the V4 starter <span aria-hidden="true">↗</span></a>
+          </div>
+          <div class="code-window" aria-label="Example Evidence Lint response">
+            <div class="code-titlebar"><span></span><span></span><span></span><b>preflight.ts</b></div>
+            <pre><code><span class="code-dim">const</span> report = <span class="code-key">await</span> evidence.lint(manifest);
+
+report.valid
+<span class="code-key">// true: structural gates passed</span>
+
+report.fingerprint
+<span class="code-string">"sha256:73b0…f24c"</span>
+
+report.targetNetworks
+<span class="code-string">["eip155:4663"]</span>
+
+<span class="code-dim">// No wallet. No issuance. No trading.</span>
+<span class="code-dim">// Evidence, then verification, then policy.</span></code></pre>
+            <div class="code-status"><span></span> Chain-neutral evidence core</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section principles-section" id="principles" aria-labelledby="principles-title">
+        <div class="section-heading reveal">
+          <p class="section-index">06 / Design principles</p>
+          <h2 id="principles-title">Build for billions of objects.<br><span>Earn trust one claim at a time.</span></h2>
+        </div>
+        <div class="principles-grid">
+          <article class="reveal"><span>01</span><h3>Object before token</h3><p>A token cannot make an object, right, or document real. Establish identity and evidence first.</p></article>
+          <article class="reveal"><span>02</span><h3>State survives apps</h3><p>Object history should outlive a marketplace, custodian, issuer, wallet, or chain.</p></article>
+          <article class="reveal"><span>03</span><h3>Claims stay accountable</h3><p>Every attestation retains its signer, scope, timestamp, source, and current status.</p></article>
+          <article class="reveal"><span>04</span><h3>Finance is a layer</h3><p>Markets can use verified state; they do not replace title, custody, law, or physical truth.</p></article>
+        </div>
+      </section>
+
+      <section class="closing-section" aria-labelledby="closing-title">
+        <div class="closing-orbit" aria-hidden="true"></div>
+        <p class="section-index reveal">Build the object layer</p>
+        <h2 id="closing-title" class="reveal">Tokenize the world.<br><span>Start with the object.</span></h2>
+        <p class="reveal">Run the live evidence gate, inspect the open-source contracts, and help turn physical identity plus accountable evidence into portable infrastructure for the programmable real world.</p>
+        <div class="hero-actions reveal">
+          <a class="button button-primary" href="#linter">Run Evidence Lint <span aria-hidden="true">→</span></a>
+          <a class="button button-secondary" href="https://github.com/robinhoodrwa/3DP/tree/rwa-object-protocol/rwa-object-protocol" target="_blank" rel="noopener noreferrer">View GitHub <span aria-hidden="true">↗</span></a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <a class="brand footer-brand" href="#top" aria-label="RWA Protocol home">
+        <svg class="brand-mark" viewBox="0 0 44 44" aria-hidden="true"><path d="M5 11.5 22 2l17 9.5v21L22 42 5 32.5z"/><path d="M13 16.2 22 11l9 5.2v10.6L22 32l-9-5.2z"/><circle cx="22" cy="21.5" r="3.5"/></svg>
+        <span class="brand-name">RWA<span>Protocol</span></span>
+      </a>
+      <p>The open object layer for the tokenized world.</p>
+      <nav aria-label="Footer navigation">
+        <a href="#architecture">Object layer</a>
+        <a href="https://github.com/robinhoodrwa/3DP/tree/rwa-object-protocol/rwa-object-protocol" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="https://x.com/RWAEVERYTHING" target="_blank" rel="noopener noreferrer">X</a>
+        <a href="mailto:rwaactivated@gmail.com">Contact</a>
+      </nav>
+      <div class="footer-legal">
+        <span>© <span data-year>2026</span> Real World Activated, Inc.</span>
+        <span>Pre-launch. No token is available. Nothing here is an offer to sell securities or a substitute for legal, title, appraisal, or compliance review.</span>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>

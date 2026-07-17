@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="500" viewBox="0 0 1500 500">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#07100f"/>
+      <stop offset="0.5" stop-color="#0a1517"/>
+      <stop offset="1" stop-color="#101d30"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#b8ff6a"/>
+      <stop offset="1" stop-color="#61e7c8"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#61e7c8" stop-opacity="0.14"/>
+      <stop offset="1" stop-color="#61e7c8" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#b8ff6a" stroke-opacity="0.06" stroke-width="1"/>
+    </pattern>
+    <filter id="glow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="14" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="1500" height="500" fill="url(#bg)"/>
+  <rect width="1500" height="500" fill="url(#grid)"/>
+  <ellipse cx="365" cy="245" rx="330" ry="310" fill="url(#halo)"/>
+  <ellipse cx="1260" cy="90" rx="420" ry="260" fill="url(#halo)" opacity="0.45"/>
+  <path d="M150 0 0 150M330 0 0 330M1500 160l-340 340M1500 340l-160 160" fill="none" stroke="#61e7c8" stroke-opacity="0.12" stroke-width="2"/>
+  <g transform="translate(290 250)">
+    <path d="M0-124 107-62v124L0 124-107 62V-62z" fill="#b8ff6a" fill-opacity="0.025" stroke="url(#edge)" stroke-width="5"/>
+    <path d="M0-83 72-42v84L0 83-72 42v-84z" fill="none" stroke="#61e7c8" stroke-opacity="0.55" stroke-width="3"/>
+    <circle r="12" fill="#b8ff6a" filter="url(#glow)"/>
+  </g>
+  <g font-family="Arial, Helvetica, sans-serif">
+    <text x="480" y="151" fill="#b8ff6a" font-size="20" font-weight="700" letter-spacing="7">RWA PROTOCOL</text>
+    <text x="480" y="237" fill="#f5f8f2" font-size="62" font-weight="800" letter-spacing="-1">EVIDENCE BEFORE ISSUANCE</text>
+    <text x="482" y="292" fill="#b9c5c2" font-size="29" font-weight="400">Portable asset passports for programmable real-world assets.</text>
+    <g transform="translate(480 347)">
+      <rect width="136" height="46" rx="23" fill="#b8ff6a" fill-opacity="0.1" stroke="#b8ff6a" stroke-opacity="0.55"/>
+      <circle cx="24" cy="23" r="5" fill="#b8ff6a" filter="url(#glow)"/>
+      <text x="42" y="30" fill="#dfffc1" font-size="17" font-weight="700" letter-spacing="2">LIVE ALPHA</text>
+      <text x="170" y="30" fill="#94a3b8" font-size="20" font-weight="700" letter-spacing="1">RWAACTIVATED.COM</text>
+    </g>
+  </g>
+  <rect x="0" y="496" width="1500" height="4" fill="url(#edge)" opacity="0.8"/>
+</svg>

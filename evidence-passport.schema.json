@@ -1,0 +1,278 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rwaactivated.com/evidence-passport.schema.json",
+  "title": "RWA Activated Evidence Passport Preflight",
+  "description": "A chain-neutral pre-issuance profile for binding real-world asset identity, evidence, custody, and rights into a deterministic manifest.",
+  "type": "object",
+  "required": [
+    "$schema",
+    "schemaVersion",
+    "id",
+    "version",
+    "createdAt",
+    "asset",
+    "issuer",
+    "evidence",
+    "custody",
+    "rights"
+  ],
+  "properties": {
+    "$schema": {
+      "const": "https://rwaactivated.com/evidence-passport.schema.json"
+    },
+    "schemaVersion": {
+      "const": "0.1.0"
+    },
+    "id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "asset": {
+      "type": "object",
+      "required": ["name", "type", "identifiers"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "identifiers": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["scheme", "value"],
+            "properties": {
+              "scheme": {
+                "type": "string",
+                "minLength": 1
+              },
+              "value": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uri": {
+                "type": "string",
+                "format": "uri"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "issuer": {
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/evidence"
+      }
+    },
+    "custody": {
+      "type": "object",
+      "required": ["holder", "status", "asOf", "evidenceId"],
+      "properties": {
+        "holder": {
+          "$ref": "#/$defs/identifier"
+        },
+        "status": {
+          "type": "string",
+          "minLength": 1
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "evidenceId": {
+          "$ref": "#/$defs/evidenceId"
+        },
+        "location": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "rights": {
+      "type": "object",
+      "required": ["instrumentUri", "governingLaw", "transferPolicy", "evidenceId"],
+      "properties": {
+        "instrumentUri": {
+          "$ref": "#/$defs/evidenceUri"
+        },
+        "governingLaw": {
+          "type": "string",
+          "minLength": 1
+        },
+        "transferPolicy": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidenceId": {
+          "$ref": "#/$defs/evidenceId"
+        }
+      },
+      "additionalProperties": false
+    },
+    "targetNetworks": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9-]+:[A-Za-z0-9-]+$"
+      }
+    },
+    "anchors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["network", "status"],
+        "properties": {
+          "network": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+:[A-Za-z0-9-]+$"
+          },
+          "status": {
+            "enum": ["planned", "confirmed"]
+          },
+          "transactionHash": {
+            "type": "string",
+            "pattern": "^0x[a-fA-F0-9]{64}$"
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "const": "confirmed"
+                }
+              }
+            },
+            "then": {
+              "required": ["transactionHash"]
+            },
+            "else": {
+              "not": {
+                "required": ["transactionHash"]
+              }
+            }
+          }
+        ],
+        "additionalProperties": false
+      }
+    },
+    "extensions": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^(https://|urn:|did:).+"
+    },
+    "evidenceId": {
+      "type": "string",
+      "pattern": "^urn:sha256:[a-fA-F0-9]{64}$"
+    },
+    "evidenceUri": {
+      "type": "string",
+      "pattern": "^(https://|ipfs://|ar://).+"
+    },
+    "proof": {
+      "type": "object",
+      "required": ["type", "verificationMethod", "proofValue"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "verificationMethod": {
+          "$ref": "#/$defs/identifier"
+        },
+        "proofValue": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      "additionalProperties": false
+    },
+    "evidence": {
+      "type": "object",
+      "required": ["id", "type", "uri", "digest", "issuedAt", "issuer", "claims"],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/evidenceId"
+        },
+        "type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "uri": {
+          "$ref": "#/$defs/evidenceUri"
+        },
+        "digest": {
+          "type": "object",
+          "required": ["algorithm", "value"],
+          "properties": {
+            "algorithm": {
+              "const": "sha-256"
+            },
+            "value": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{64}$"
+            }
+          },
+          "additionalProperties": false
+        },
+        "issuedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "issuer": {
+          "$ref": "#/$defs/identifier"
+        },
+        "claims": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "proof": {
+          "$ref": "#/$defs/proof"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

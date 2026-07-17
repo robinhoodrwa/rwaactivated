@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="44%" r="70%">
+      <stop offset="0" stop-color="#152532"/>
+      <stop offset="0.55" stop-color="#0b1516"/>
+      <stop offset="1" stop-color="#070b0a"/>
+    </radialGradient>
+    <linearGradient id="edge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#b8ff6a"/>
+      <stop offset="1" stop-color="#61e7c8"/>
+    </linearGradient>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="18" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="800" height="800" fill="url(#bg)"/>
+  <circle cx="400" cy="386" r="296" fill="none" stroke="#b8ff6a" stroke-opacity="0.08" stroke-width="2"/>
+  <circle cx="400" cy="386" r="250" fill="#b8ff6a" fill-opacity="0.02"/>
+  <path d="M400 100 648 243v286L400 672 152 529V243z" fill="none" stroke="url(#edge)" stroke-width="10"/>
+  <path d="M400 168 590 278v219L400 607 210 497V278z" fill="none" stroke="#61e7c8" stroke-opacity="0.48" stroke-width="4"/>
+  <text x="400" y="438" text-anchor="middle" fill="#f5f8f2" font-family="Arial, Helvetica, sans-serif" font-size="170" font-weight="800" letter-spacing="8">RWA</text>
+  <circle cx="400" cy="532" r="14" fill="#b8ff6a" filter="url(#glow)"/>
+  <text x="400" y="737" text-anchor="middle" fill="#94a3b8" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" letter-spacing="8">PROTOCOL</text>
+</svg>
