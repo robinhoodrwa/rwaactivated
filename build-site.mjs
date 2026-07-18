@@ -24,6 +24,7 @@ const entries = [
   "evidence-passport.schema.json",
   "evidence-linter.js",
   "sw.js",
+  "proofgate",
   "social",
   "studio",
   "verify",

@@ -1,6 +1,6 @@
 "use strict";
 
-const CACHE_NAME = "rwa-product-suite-v14";
+const CACHE_NAME = "rwa-product-suite-v16";
 const CORE_ASSETS = [
   "/",
   "/styles.css",
@@ -26,6 +26,10 @@ const CORE_ASSETS = [
   "/wallet/grid2d/rwa_grid2d_wasm_bg.wasm?v=20260717.3",
   "/wallet/vendor/ethers.min.js?v=20260717.3",
   "/wallet/vendor/walletconnect.min.js?v=20260717.3",
+  "/proofgate/",
+  "/proofgate/config.js",
+  "/proofgate/app.js",
+  "/proofgate/styles.css",
   "/studio/",
   "/studio/studio.js",
   "/verify/",
