@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#060d09">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="Proof-to-Capital: an equipment-finance drawdown gate on Robinhood Chain testnet. Lender escrow releases only after the object passport, delivery, and required issuer claims check out. No proof, no draw.">
+  <title>Proof-to-Capital — RWA ProofGate</title>
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css?v=20260718.1">
+  <script type="module" src="app.js?v=20260718.1"></script>
+</head>
+<body>
+  <a class="skip-link" href="#gate-main">Skip to facility console</a>
+
+  <header class="top-bar">
+    <a class="wordmark" href="../" aria-label="RWA Protocol home">
+      <svg viewBox="0 0 40 40" aria-hidden="true">
+        <path d="M6 12.5 20 4l14 8.5v15L20 36 6 27.5z" fill="none" stroke="currentColor" stroke-width="2"/>
+        <path d="m6 12.5 14 8.4 14-8.4M20 20.9V36" fill="none" stroke="currentColor" stroke-width="2"/>
+        <circle cx="20" cy="20.9" r="3.4" fill="currentColor"/>
+      </svg>
+      <span><b>RWA</b> ProofGate</span>
+    </a>
+    <nav class="product-nav" aria-label="Product previews">
+      <a href="../">Website</a><a href="../wallet/">Wallet</a><a href="../verify/">Verifier</a><a class="is-active" href="./" aria-current="page">ProofGate</a>
+    </nav>
+    <div class="top-actions">
+      <span class="network-chip" data-network-chip data-tone="wait"><i aria-hidden="true"></i><span data-network-chip-label>Robinhood testnet</span></span>
+      <button class="connect-button" id="connect-wallet" type="button">Connect wallet</button>
+    </div>
+  </header>
+
+  <main id="gate-main" class="gate-main">
+
+    <!-- ============ Masthead ============ -->
+    <section class="masthead" aria-labelledby="masthead-title">
+      <div class="masthead-copy">
+        <p class="eyebrow">Proof-to-Capital · Equipment finance · Testnet pilot</p>
+        <h1 id="masthead-title">No proof,<br><span>no draw.</span></h1>
+        <p class="masthead-summary">
+          A lender escrows test USDG against one real machine. The drawdown gate opens only when the
+          object passport is live and unrevoked, the borrower accepts delivery, and every required
+          claim — title review, inspection, insurance, custody — is published by the exact issuer the
+          term sheet names. Until then, capital does not move.
+        </p>
+        <div class="masthead-actions">
+          <a class="primary-button" href="#facility-console"><span>Open a facility</span><b aria-hidden="true">→</b></a>
+          <button class="text-button" type="button" data-open-explainer>How the gate works</button>
+        </div>
+        <div class="rail-strip" aria-label="Gate stages">
+          <span><i>01</i> Escrow funded</span>
+          <span><i>02</i> Delivery accepted</span>
+          <span><i>03</i> Claims in force</span>
+          <span><i>04</i> Draw executes</span>
+        </div>
+      </div>
+
+      <!-- Live network + protocol metadata: read-only RPC, no wallet needed -->
+      <aside class="network-desk" aria-labelledby="network-desk-title">
+        <div class="desk-head">
+          <h2 id="network-desk-title">Network desk</h2>
+          <button class="ghost-button" type="button" data-refresh-network>Refresh</button>
+        </div>
+        <p class="desk-note">Read directly from the public Robinhood Chain testnet RPC. No wallet required.</p>
+        <dl class="desk-grid">
+          <div><dt>RPC status</dt><dd data-net="status"><span class="pending-dash">checking…</span></dd></div>
+          <div><dt>Chain ID</dt><dd data-net="chainId"><span class="pending-dash">—</span></dd></div>
+          <div><dt>Latest block</dt><dd data-net="block"><span class="pending-dash">—</span></dd></div>
+          <div><dt>Block age</dt><dd data-net="blockAge"><span class="pending-dash">—</span></dd></div>
+          <div><dt>Gas price</dt><dd data-net="gasPrice"><span class="pending-dash">—</span></dd></div>
+        </dl>
+        <h3 class="desk-sub">Protocol contracts</h3>
+        <dl class="desk-grid">
+          <div><dt>Passport registry</dt><dd data-net="registry"><span class="pending-dash">—</span></dd></div>
+          <div><dt>Settlement token</dt><dd data-net="token"><span class="pending-dash">—</span></dd></div>
+          <div><dt>Token supply</dt><dd data-net="tokenSupply"><span class="pending-dash">—</span></dd></div>
+          <div><dt>ProofGate</dt><dd data-net="proofgate"><span class="pending-dash">—</span></dd></div>
+          <div><dt>Facilities created</dt><dd data-net="facilityCount"><span class="pending-dash">—</span></dd></div>
+        </dl>
+        <p class="desk-foot" data-net="updated" aria-live="polite"></p>
+      </aside>
+    </section>
+
+    <!-- ============ Facility console ============ -->
+    <section class="console" id="facility-console" aria-labelledby="console-title">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Facility console</p>
+          <h2 id="console-title">Look up a live facility</h2>
+        </div>
+        <p class="section-note">Everything below is read from the ProofGate contract and the passport registry at request time.</p>
+      </div>
+
+      <form class="lookup-form" data-lookup-form>
+        <label class="field">
+          <span class="field-label">Facility ID</span>
+          <input name="facilityId" type="text" inputmode="numeric" pattern="[0-9]*" value="1" placeholder="e.g. 1" autocomplete="off" required>
+        </label>
+        <button class="primary-button" type="submit" data-lookup-submit><span>Load facility</span></button>
+      </form>
+      <p class="inline-status" data-lookup-status role="status" aria-live="polite"></p>
+
+      <div class="facility-view" data-facility-view hidden>
+
+        <div class="state-banner" data-state-banner>
+          <div class="state-id">
+            <span class="state-kicker">Facility</span>
+            <strong data-fac="id">—</strong>
+            <span class="state-badge" data-fac="stateBadge">—</span>
+          </div>
+          <div class="state-verdict" data-fac="verdict">
+            <span class="verdict-mark" data-fac="verdictMark" aria-hidden="true">●</span>
+            <div>
+              <strong data-fac="verdictTitle">—</strong>
+              <p data-fac="verdictText">—</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="console-columns">
+          <div class="console-primary">
+
+            <section class="panel" aria-labelledby="ledger-title">
+              <h3 id="ledger-title">Capital ledger</h3>
+              <dl class="ledger">
+                <div><dt>Principal</dt><dd data-fac="principal">—</dd></div>
+                <div><dt>Escrow funded</dt><dd data-fac="funded">—</dd></div>
+                <div><dt>Drawn to payee</dt><dd data-fac="drawn">—</dd></div>
+                <div><dt>Repaid to lender</dt><dd data-fac="repaid">—</dd></div>
+                <div class="ledger-outstanding"><dt>Outstanding</dt><dd data-fac="outstanding">—</dd></div>
+              </dl>
+              <div class="ledger-meter" role="img" data-fac="meterLabelWrap" aria-label="Funding progress">
+                <div class="meter-track"><div class="meter-fill" data-fac="meterFill"></div></div>
+                <span class="meter-caption" data-fac="meterCaption"></span>
+              </div>
+            </section>
+
+            <section class="panel" aria-labelledby="checklist-title">
+              <div class="panel-head-row">
+                <h3 id="checklist-title">Readiness checklist</h3>
+                <span class="panel-tag" data-fac="checklistTag">—</span>
+              </div>
+              <p class="panel-note">Each gate is verified onchain by <code>canDraw</code> at the moment of drawdown — this list mirrors that exact logic.</p>
+              <ul class="checklist" data-fac="checklist"></ul>
+            </section>
+
+            <section class="panel" aria-labelledby="claims-title">
+              <h3 id="claims-title">Required claims</h3>
+              <p class="panel-note">Claims are issuer statements recorded as digests. They do not prove title, ownership, or value; raw evidence stays offchain with the parties.</p>
+              <div class="claims-table-wrap">
+                <table class="claims-table">
+                  <caption class="visually-hidden">Required claims with issuer, digest, expiry, and status</caption>
+                  <thead>
+                    <tr><th scope="col">Claim</th><th scope="col">Approved issuer</th><th scope="col">Digest</th><th scope="col">Expires</th><th scope="col">Status</th></tr>
+                  </thead>
+                  <tbody data-fac="claimRows"></tbody>
+                </table>
+              </div>
+            </section>
+
+          </div>
+          <div class="console-secondary">
+
+            <section class="panel" aria-labelledby="parties-title">
+              <h3 id="parties-title">Parties</h3>
+              <ul class="party-list" data-fac="parties"></ul>
+            </section>
+
+            <section class="panel" aria-labelledby="passport-title">
+              <h3 id="passport-title">Collateral passport</h3>
+              <dl class="kv" data-fac="passport"></dl>
+            </section>
+
+            <section class="panel" aria-labelledby="actions-title">
+              <h3 id="actions-title">Actions</h3>
+              <p class="panel-note" data-actions-note>Connect a wallet to see the actions available to your address on this facility.</p>
+              <div class="action-stack" data-action-stack></div>
+              <ol class="tx-log" data-tx-log aria-label="Transaction log" aria-live="polite"></ol>
+            </section>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Planner / create ============ -->
+    <section class="planner" id="planner" aria-labelledby="planner-title">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Facility planner</p>
+          <h2 id="planner-title">Draft a facility term sheet</h2>
+        </div>
+        <p class="planner-badge" role="note"><b>Local planner.</b> Everything in this drafting area is computed in your browser. Nothing here is chain state until you submit <code>createFacility</code> and the network confirms it.</p>
+      </div>
+
+      <form class="planner-form" data-planner-form>
+        <fieldset class="planner-block">
+          <legend>Parties</legend>
+          <p class="planner-hint">You (the connected wallet) become the lender. The payee is the equipment vendor who receives the drawdown — it cannot be changed after creation.</p>
+          <div class="planner-row">
+            <label class="field"><span class="field-label">Borrower address</span>
+              <input name="borrower" type="text" placeholder="0x…" autocomplete="off" spellcheck="false" required>
+            </label>
+            <label class="field"><span class="field-label">Payee address (equipment vendor)</span>
+              <input name="payee" type="text" placeholder="0x…" autocomplete="off" spellcheck="false" required>
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset class="planner-block">
+          <legend>Collateral object</legend>
+          <p class="planner-hint">Reference an anchored object passport. The gate later verifies the passport is live, unrevoked, still carries this physical ID, and is controlled by the borrower.</p>
+          <div class="planner-row">
+            <label class="field field-wide"><span class="field-label">Passport ID (bytes32)</span>
+              <input name="passportId" type="text" placeholder="0x…64 hex chars" autocomplete="off" spellcheck="false" required>
+            </label>
+            <button class="ghost-button planner-check" type="button" data-check-passport>Check registry</button>
+          </div>
+          <p class="inline-status" data-passport-check-status role="status" aria-live="polite"></p>
+          <label class="field field-wide"><span class="field-label">Physical ID (bytes32, from the passport anchor)</span>
+            <input name="physicalId" type="text" placeholder="0x…64 hex chars" autocomplete="off" spellcheck="false" required>
+          </label>
+        </fieldset>
+
+        <fieldset class="planner-block">
+          <legend>Terms</legend>
+          <div class="planner-row">
+            <label class="field"><span class="field-label">Principal (test USDG)</span>
+              <input name="principal" type="text" inputmode="decimal" placeholder="e.g. 250000" autocomplete="off" required>
+            </label>
+            <label class="field field-wide"><span class="field-label">Policy terms (text, hashed locally to bytes32)</span>
+              <textarea name="policyText" rows="3" placeholder="Facility terms, covenants, schedule — hashed in this browser; the text itself never leaves your device." required></textarea>
+            </label>
+          </div>
+          <p class="planner-computed">Policy hash <code data-plan="policyHash">—</code></p>
+        </fieldset>
+
+        <fieldset class="planner-block">
+          <legend>Required claims</legend>
+          <p class="planner-hint">Each row names one statement and the only address allowed to publish it. The draw stays blocked until every one is in force.</p>
+          <div class="requirement-rows" data-requirement-rows></div>
+          <button class="ghost-button" type="button" data-add-requirement>+ Add requirement</button>
+        </fieldset>
+
+        <div class="planner-output">
+          <h3>Computed <code>createFacility</code> call <span class="local-tag">local preview</span></h3>
+          <pre class="call-preview" data-plan="preview" aria-live="polite">Fill the form to preview the exact on-chain arguments.</pre>
+          <div class="planner-actions">
+            <button class="ghost-button" type="button" data-copy-args>Copy arguments</button>
+            <button class="primary-button" type="submit" data-create-submit><span>Create facility onchain</span></button>
+          </div>
+          <p class="inline-status" data-planner-status role="status" aria-live="polite"></p>
+        </div>
+      </form>
+    </section>
+
+    <!-- ============ Boundaries ============ -->
+    <section class="boundaries" aria-labelledby="boundaries-title">
+      <h2 id="boundaries-title">What this is — and is not</h2>
+      <ul>
+        <li><b>Testnet only.</b> Facilities settle in test USDG on Robinhood Chain testnet (chain 46630). No real money moves.</li>
+        <li><b>Not affiliated.</b> This is an independent protocol experiment. It is not built, endorsed, or operated by Robinhood Markets.</li>
+        <li><b>Proof of statements, not of title.</b> Passport scans and claim digests attest that a named issuer said something at a point in time. They do not prove title, ownership, or value.</li>
+        <li><b>No seizure, no liquidation.</b> If a borrower stops repaying, the lender's only protocol action is to release and close the facility. Legal recourse lives offchain.</li>
+        <li><b>Evidence stays offchain.</b> Only digests are recorded. Inspection reports, insurance certificates, and legal opinions remain with the parties.</li>
+        <li><b>Permissionless test registry.</b> The registry does not authenticate who chose a physical ID or prevent separate passports from claiming the same one. A collision can block facility activation; production use needs curated issuers and dispute governance.</li>
+        <li><b>Concurrency, not liens.</b> One object can back only one active facility at a time — a protocol-only rule that binds after escrow is fully funded and the borrower accepts delivery. It is not a lien registry or notice to third parties.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="gate-footer">
+    <div class="footer-contracts" data-footer-contracts>
+      <span>Registry <a data-explorer="registry" href="#" rel="noopener" target="_blank"><code>—</code></a></span>
+      <span>Test USDG <a data-explorer="token" href="#" rel="noopener" target="_blank"><code>—</code></a></span>
+      <span data-footer-proofgate>ProofGate <code>not deployed</code></span>
+    </div>
+    <p>Proof-to-Capital is a testnet pilot by Real World Activated. No proof, no draw.</p>
+  </footer>
+
+  <!-- ============ First-run explainer ============ -->
+  <dialog class="explainer" data-explainer aria-labelledby="explainer-title">
+    <form method="dialog" class="explainer-inner">
+      <p class="eyebrow">Proof-to-Capital</p>
+      <h2 id="explainer-title">Capital that waits for proof</h2>
+      <p class="explainer-lede">ProofGate is an escrow with a checklist. Five parties, one machine, one rule: <b>no proof, no draw.</b></p>
+      <ol class="explainer-steps">
+        <li><b>Lender opens a facility.</b> Names the borrower, the equipment vendor to be paid, the object passport, the principal, and exactly which issuers must attest what.</li>
+        <li><b>Lender escrows test USDG.</b> Principal sits in the contract — not with the borrower, not with the vendor.</li>
+        <li><b>Issuers publish claims.</b> Counsel, inspector, insurer, custodian — each publishes a digest of their signed statement, with an expiry. Only the named issuer address can.</li>
+        <li><b>Borrower accepts delivery.</b> Verified against the live passport registry: right object, unrevoked anchor, borrower in control.</li>
+        <li><b>The gate opens.</b> <code>canDraw</code> re-checks everything onchain. If a single claim is missing, expired, revoked, or from the wrong address, the draw reverts.</li>
+        <li><b>Draw pays the vendor.</b> Principal moves to the pre-approved payee only. Repayment flows back to the lender and closes the facility.</li>
+      </ol>
+      <p class="explainer-bounds">Testnet only · issuer statements, not proof of title or value · raw evidence stays offchain · no automatic seizure · not affiliated with Robinhood Markets.</p>
+      <button class="primary-button" value="close" autofocus><span>Enter the desk</span></button>
+    </form>
+  </dialog>
+
+  <div class="toast" role="status" aria-live="polite" data-toast></div>
+</body>
+</html>
