@@ -5,7 +5,7 @@
     "build": "node build-site.mjs",
     "build:walletconnect": "esbuild wallet/walletconnect-entry.js --bundle --format=esm --platform=browser --target=es2022 --minify --outfile=wallet/vendor/walletconnect.min.js",
     "build:ios": "npm run build && npx cap sync ios",
-    "test": "node --test evidence-linter.test.js wallet-connection.test.mjs embedded-wallet.test.mjs"
+    "test": "node --test evidence-linter.test.js wallet-connection.test.mjs embedded-wallet.test.mjs native-scan.test.mjs"
   },
   "dependencies": {
     "@capacitor/core": "^8.4.2",

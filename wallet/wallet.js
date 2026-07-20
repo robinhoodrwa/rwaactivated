@@ -33,6 +33,7 @@ import {
   lockEmbeddedWallet,
   unlockEmbeddedWallet,
 } from "./embedded-wallet.js?v=20260717.4";
+import { fileFromNativeScan } from "./native-scan.js?v=20260720.1";
 
 const appState = {
   passports: [],
@@ -193,15 +194,7 @@ async function scanNativeAsset() {
   nativeScanButton.innerHTML = "Opening scanner…";
   try {
     const result = await scanner.scan();
-    if (!result?.obj) throw new Error("The scanner did not return OBJ geometry.");
-    const file = new File(
-      [result.obj],
-      result.fileName || `rwa-asset-scan-${Date.now()}.obj`,
-      { type: "model/obj" },
-    );
-    if (file.size > MAX_MODEL_BYTES) {
-      throw new RangeError(`The captured mesh is ${formatBytes(file.size)}. Scan a smaller area or import an OBJ under ${formatBytes(MAX_MODEL_BYTES)}.`);
-    }
+    const file = await fileFromNativeScan(scanner, result, { maxBytes: MAX_MODEL_BYTES });
     setSelectedMesh(file);
     showToast(`LiDAR mesh captured: ${Number(result.vertexCount || 0).toLocaleString()} vertices.`);
     await runRecognition();

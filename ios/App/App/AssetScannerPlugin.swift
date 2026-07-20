@@ -8,10 +8,14 @@ final class AssetScannerPlugin: CAPPlugin, CAPBridgedPlugin {
     let identifier = "AssetScannerPlugin"
     let jsName = "AssetScanner"
     let pluginMethods: [CAPPluginMethod] = [
-        CAPPluginMethod(name: "scan", returnType: CAPPluginReturnPromise)
+        CAPPluginMethod(name: "scan", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "readScanChunk", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "discardScan", returnType: CAPPluginReturnPromise)
     ]
 
     private weak var scannerViewController: AssetScannerViewController?
+    private let scanLock = NSLock()
+    private var pendingScan: (id: String, data: Data)?
 
     @objc func scan(_ call: CAPPluginCall) {
         guard ARWorldTrackingConfiguration.supportsSceneReconstruction(.mesh) else {
@@ -33,11 +37,18 @@ final class AssetScannerPlugin: CAPPlugin, CAPBridgedPlugin {
                 call.reject("Asset scan cancelled.", "SCAN_CANCELLED")
             }
             scanner.onComplete = { [weak self, weak scanner] result in
+                guard let self else { return }
                 scanner?.dismiss(animated: true)
-                self?.scannerViewController = nil
+                self.scannerViewController = nil
+                let scanId = UUID().uuidString
+                let data = Data(result.obj.utf8)
+                self.scanLock.lock()
+                self.pendingScan = (scanId, data)
+                self.scanLock.unlock()
                 call.resolve([
                     "fileName": result.fileName,
-                    "obj": result.obj,
+                    "scanId": scanId,
+                    "byteCount": data.count,
                     "vertexCount": result.vertexCount,
                     "faceCount": result.faceCount
                 ])
@@ -45,6 +56,48 @@ final class AssetScannerPlugin: CAPPlugin, CAPBridgedPlugin {
             self.scannerViewController = scanner
             presenter.present(scanner, animated: true)
         }
+    }
+
+    @objc func readScanChunk(_ call: CAPPluginCall) {
+        guard
+            let scanId = call.getString("scanId"),
+            let offset = call.getInt("offset"),
+            let requestedLength = call.getInt("length"),
+            offset >= 0,
+            requestedLength > 0
+        else {
+            call.reject("Invalid scan chunk request.", "INVALID_SCAN_CHUNK")
+            return
+        }
+
+        scanLock.lock()
+        guard let pendingScan, pendingScan.id == scanId, offset < pendingScan.data.count else {
+            scanLock.unlock()
+            call.reject("The captured scan is no longer available.", "SCAN_NOT_FOUND")
+            return
+        }
+        let end = min(offset + min(requestedLength, 262_144), pendingScan.data.count)
+        let chunk = String(decoding: pendingScan.data[offset..<end], as: UTF8.self)
+        let isComplete = end == pendingScan.data.count
+        scanLock.unlock()
+        call.resolve([
+            "chunk": chunk,
+            "nextOffset": end,
+            "done": isComplete
+        ])
+    }
+
+    @objc func discardScan(_ call: CAPPluginCall) {
+        guard let scanId = call.getString("scanId") else {
+            call.reject("A scan identifier is required.", "INVALID_SCAN_ID")
+            return
+        }
+        scanLock.lock()
+        if pendingScan?.id == scanId {
+            pendingScan = nil
+        }
+        scanLock.unlock()
+        call.resolve()
     }
 }
 
