@@ -1,4 +1,4 @@
-import { cp, mkdir, rm, writeFile } from "node:fs/promises";
+import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { dirname, join, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -50,23 +50,12 @@ for (const entry of entries) {
 console.log(`Prepared curated static site in ${output}`);
 
 await rm(iosOutput, { recursive: true, force: true });
-await cp(output, iosOutput, { recursive: true });
-await writeFile(
-  join(iosOutput, "index.html"),
-  `<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#07110b">
-  <meta http-equiv="refresh" content="0;url=wallet/">
-  <title>RWA Passport</title>
-</head>
-<body>
-  <p><a href="wallet/">Open RWA Passport</a></p>
-</body>
-</html>
-`,
-  "utf8",
+await cp(output, iosOutput, { recursive:const walletDocument = await readFile(join(root, "wallet", "index.html"), "utf8");
+const iosDocument = walletDocument.replace("<head>", '<head>\n  <base href="wallet/">');
+if (iosDocument === walletDocument) {
+  throw new Error("wallet/index.html is missing its <head> element");
+}
+await writeFile(join(iosOutput, "index.html"), iosDocument, "utf8");
+utf8",
 );
 console.log(`Prepared native iOS web assets in ${iosOutput}`);
