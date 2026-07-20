@@ -67,6 +67,7 @@ jobs:
             -authenticationKeyIssuerID "$APP_STORE_CONNECT_ISSUER_ID" \
             DEVELOPMENT_TEAM=PTFKU347TU \
             CODE_SIGN_STYLE=Automatic \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
             PRODUCT_BUNDLE_IDENTIFIER=com.rwaactivated.passport \
             MARKETING_VERSION=1.0 \
             CURRENT_PROJECT_VERSION="${{ github.run_number }}"
