@@ -13,8 +13,8 @@
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../apple-touch-icon.png">
   <link rel="manifest" href="../manifest.webmanifest?v=20260717.1">
-  <link rel="stylesheet" href="wallet.css?v=20260717.3">
-  <script type="module" src="wallet.js?v=20260717.3"></script>
+  <link rel="stylesheet" href="wallet.css?v=20260717.5">
+  <script type="module" src="wallet.js?v=20260717.5"></script>
 </head>
 <body>
   <a class="skip-link" href="#wallet-main">Skip to wallet</a>
@@ -110,9 +110,12 @@
           <button class="back-button" type="button" data-go="home" aria-label="Back to wallet">←</button>
           <div>
             <p class="eyebrow">New object passport</p>
-            <h1 id="scan-title">Recognize a real mesh</h1>
+            <h1 id="scan-title">Scan a real object</h1>
           </div>
           <span class="step-count" id="scan-step-count">Step 1 of 3</span>
+          <div class="scan-progress" aria-hidden="true">
+            <span>Scan</span><span>Tag</span><span>Anchor</span>
+          </div>
         </header>
 
         <div class="flow-layout">
@@ -120,7 +123,22 @@
             <section class="flow-step is-active" data-scan-step="mesh" aria-labelledby="mesh-step-title">
               <div class="step-heading">
                 <span>01</span>
-                <div><h2 id="mesh-step-title">Import the scan</h2><p>OBJ geometry only. The file is processed in this browser and is never uploaded.</p></div>
+                <div><h2 id="mesh-step-title">Scan the asset</h2><p>Capture the object in 3D with this iPhone, or import an OBJ file. Everything is computed on this device — the mesh is never uploaded.</p></div>
+              </div>
+              <div class="native-scan-panel" id="native-scan-panel" hidden>
+                <span class="scan-glyph" aria-hidden="true">
+                  <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 15V9a3 3 0 0 1 3-3h6M33 6h6a3 3 0 0 1 3 3v6M42 33v6a3 3 0 0 1-3 3h-6M15 42H9a3 3 0 0 1-3-3v-6"/>
+                    <path d="m24 14 9 5.4v10L24 35l-9-5.6v-10z"/>
+                    <path d="m15 19.4 9 5.4 9-5.4M24 24.8V35" stroke-opacity=".55" stroke-width="2"/>
+                  </svg>
+                </span>
+                <div>
+                  <span class="scan-chip"><i></i>iPhone LiDAR ready</span>
+                  <strong>Scan the object with this iPhone</strong>
+                  <span>Walk slowly around it and capture every side. The 3D mesh is processed here and never leaves this phone.</span>
+                </div>
+                <button class="primary-button scan-cta" id="native-asset-scan" type="button">Start scanning <b>→</b></button>
               </div>
 
               <label class="mesh-drop" id="mesh-drop" for="mesh-file">
@@ -128,9 +146,9 @@
                 <span class="mesh-drop-icon" aria-hidden="true">
                   <svg viewBox="0 0 48 48"><path d="M24 31V10m0 0-8 8m8-8 8 8M10 30v7a3 3 0 0 0 3 3h22a3 3 0 0 0 3-3v-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </span>
-                <strong>Choose OBJ from Files</strong>
-                <span>or drop a mesh here on desktop</span>
-                <small>Maximum 24 MB</small>
+                <strong>Import an OBJ file</strong>
+                <span>From Files, or drop a mesh here on desktop</span>
+                <small>Max 24 MB</small>
               </label>
 
               <div class="mesh-file-card" id="mesh-file-card" hidden>
@@ -152,15 +170,15 @@
               </div>
               <pre class="hash-list" id="recognition-hashes" hidden></pre>
 
-              <div class="source-guidance">
-                <strong>On iPhone</strong>
+              <details class="source-guidance" id="import-guidance">
+                <summary>How to export a scan as OBJ</summary>
                 <ol>
                   <li>Scan the complete object with a LiDAR or photogrammetry app.</li>
                   <li>Export a closed, detailed mesh as <b>OBJ</b> to Files.</li>
-                  <li>Return here and choose that file. Use the same scanner settings for rescans.</li>
+                  <li>Choose that file above. Use the same scanner settings for rescans.</li>
                 </ol>
-                <p>This PWA does not pretend camera photos are a 3D mesh. Recognition starts only from actual OBJ geometry.</p>
-              </div>
+                <p>A camera photo is not a 3D mesh. Recognition starts only from captured or imported OBJ geometry.</p>
+              </details>
 
               <div class="step-actions">
                 <button class="primary-button" id="recognize-mesh" type="button" disabled>Run local recognition <b>→</b></button>
@@ -170,7 +188,7 @@
             <section class="flow-step" data-scan-step="details" aria-labelledby="details-step-title" hidden>
               <div class="step-heading">
                 <span>02</span>
-                <div><h2 id="details-step-title">Describe the object</h2><p>Claims remain local. Only their deterministic digest is anchored.</p></div>
+                <div><h2 id="details-step-title">Tag the asset</h2><p>Name the object and add the claims that belong to it. Details stay on this phone — only deterministic digests can be anchored.</p></div>
               </div>
 
               <form id="asset-form" class="asset-form" novalidate>
@@ -178,7 +196,7 @@
                 <label class="field"><span>Asset class <b>Required</b></span><select id="asset-class" name="assetClass" required><option value="">Choose class</option><option value="equipment">Equipment</option><option value="vehicle">Vehicle</option><option value="machine">Machine</option><option value="agriculture">Agriculture</option><option value="infrastructure">Infrastructure</option><option value="inventory">Inventory</option><option value="other">Other</option></select></label>
                 <label class="field"><span>Manufacturer</span><input id="manufacturer" name="manufacturer" maxlength="80" autocomplete="organization" placeholder="Optional"></label>
                 <label class="field"><span>Model</span><input id="asset-model" name="model" maxlength="80" autocomplete="off" placeholder="Optional"></label>
-                <label class="field"><span>Serial or identifier</span><input id="serial-number" name="serialNumber" maxlength="100" autocomplete="off" placeholder="Optional"></label>
+                <label class="field"><span>Asset tag or serial</span><input id="serial-number" name="serialNumber" maxlength="100" autocomplete="off" placeholder="QR tag, RFID ID, serial, or internal tag"></label>
                 <label class="field full-field"><span>Current location</span><input id="asset-location" name="location" maxlength="120" autocomplete="off" placeholder="City, facility, or site — optional"></label>
                 <label class="field full-field"><span>Evidence note</span><textarea id="asset-note" name="note" maxlength="600" rows="4" placeholder="Inspection context, source, or visible condition — optional"></textarea></label>
 
@@ -202,7 +220,7 @@
             <section class="flow-step" data-scan-step="anchor" aria-labelledby="anchor-step-title" hidden>
               <div class="step-heading">
                 <span>03</span>
-                <div><h2 id="anchor-step-title">Review and anchor</h2><p>The passport already exists locally. Anchoring publishes only fixed-length digests and a resolver URL.</p></div>
+                <div><h2 id="anchor-step-title">Review and anchor</h2><p>Your passport is already saved on this device. Anchoring publishes only fixed-length digests and a resolver link.</p></div>
               </div>
 
               <article class="anchor-review-card">
@@ -224,7 +242,7 @@
               <div class="anchor-status" id="anchor-status" hidden role="status" aria-live="polite"></div>
               <div class="step-actions anchor-actions">
                 <button class="secondary-button" type="button" id="finish-locally">Finish without anchoring</button>
-                <button class="primary-button" type="button" id="anchor-passport">Connect Robinhood Wallet <b>→</b></button>
+                <button class="primary-button" type="button" id="anchor-passport">Set up in-app wallet <b>→</b></button>
               </div>
             </section>
           </div>
@@ -233,7 +251,6 @@
             <div class="aside-card">
               <span class="aside-kicker">Recognition profile</span>
               <dl><div><dt>Algorithm</dt><dd>grid2d_v3a</dd></div><div><dt>Grid</dt><dd>8</dd></div><div><dt>Sections</dt><dd>12</dd></div><div><dt>Depth</dt><dd>10</dd></div><div><dt>Engine</dt><dd>3DPass p3d</dd></div></dl>
-              <a href="https://github.com/3Dpass/p3d" target="_blank" rel="noopener noreferrer">Inspect upstream source ↗</a>
             </div>
             <p class="aside-note">Recognition is deterministic for identical OBJ bytes and designed for repeat scans. Real-world match quality still depends on scan coverage, mesh quality, and consistent parameters.</p>
           </aside>
@@ -270,13 +287,16 @@
 
         <div class="settings-grid">
           <section class="settings-card">
-            <span class="settings-icon">W</span><div><h2>Wallet signer</h2><p id="settings-wallet-state">Not connected. Every transaction requires explicit approval in your wallet.</p><button class="secondary-button" id="settings-connect-wallet" type="button">Connect a wallet</button></div>
+            <span class="settings-icon">W</span><div><h2>In-app wallet</h2><p id="settings-wallet-state">No wallet yet. Create an encrypted in-app account before publishing.</p><button class="secondary-button" id="settings-connect-wallet" type="button">Open wallet</button></div>
           </section>
           <section class="settings-card">
             <span class="settings-icon">B</span><div><h2>Encrypted-device boundary</h2><p>This PWA stores passport records in this browser's IndexedDB. The phone's passcode and iOS app isolation protect the device; use a wallet export for recovery.</p><div class="settings-actions"><button class="secondary-button" id="export-wallet" type="button">Export wallet data</button><label class="secondary-button file-button" for="import-wallet">Restore export</label><input id="import-wallet" type="file" accept="application/json,.json" hidden></div></div>
           </section>
           <section class="settings-card">
             <span class="settings-icon">N</span><div><h2>Network</h2><dl class="network-details"><div><dt>Chain</dt><dd>Robinhood Chain Testnet</dd></div><div><dt>Chain ID</dt><dd>46630</dd></div><div><dt>RPC</dt><dd>rpc.testnet.chain.robinhood.com</dd></div></dl></div>
+          </section>
+          <section class="settings-card">
+            <span class="settings-icon">P</span><div><h2>Privacy and support</h2><p>Review what stays on this device, what may leave during a network action, and how to contact Real World Activated.</p><div class="settings-actions"><a class="secondary-button" href="../privacy.html">Privacy policy</a><a class="secondary-button" href="mailto:ntrapp42@gmail.com">Contact support</a></div></div>
           </section>
           <section class="settings-card caution-card">
             <span class="settings-icon">!</span><div><h2>Independent application</h2><p>RWA Passport is not sponsored, operated, or endorsed by Robinhood or 3DPass. Testnet ETH has no monetary value. Never paste a seed phrase or private key into this app.</p></div>
@@ -300,9 +320,30 @@
 
   <dialog class="wallet-dialog" id="wallet-dialog">
     <form method="dialog"><button class="dialog-close" aria-label="Close wallet connection">×</button></form>
-    <div class="dialog-heading"><span class="dialog-brand">W</span><div><p class="eyebrow">Authorized signer</p><h2>Connect a wallet</h2></div></div>
-    <p>Use Robinhood Wallet or another EVM wallet that can approve Robinhood Chain Testnet (46630). This app requests only your public address and transaction approvals; it never receives your keys.</p>
-    <button class="primary-button full-button" id="connect-walletconnect" data-wallet-connector type="button">Connect Robinhood Wallet <b>→</b></button>
+    <div class="dialog-heading"><span class="dialog-brand">W</span><div><p class="eyebrow">Built-in account</p><h2>Your RWA wallet</h2></div></div>
+    <p>Create one encrypted wallet in the app, unlock it when you publish, and send passport anchors directly to Robinhood Chain Testnet. Your passphrase and private key never leave this device.</p>
+    <section class="embedded-wallet-card" aria-labelledby="embedded-wallet-title">
+      <div class="embedded-wallet-heading">
+        <div><strong id="embedded-wallet-title">In-app wallet</strong><span id="embedded-wallet-mode">Create your account</span></div>
+        <span class="embedded-wallet-network">Robinhood · 46630</span>
+      </div>
+      <form id="embedded-wallet-form" class="embedded-wallet-form">
+        <label><span>Wallet passphrase</span><input id="embedded-wallet-passphrase" type="password" minlength="10" autocomplete="new-password" required placeholder="10+ characters"></label>
+        <label id="embedded-wallet-confirm-field"><span>Confirm passphrase</span><input id="embedded-wallet-confirm" type="password" minlength="10" autocomplete="new-password" required placeholder="Enter it again"></label>
+        <button class="primary-button full-button" id="embedded-wallet-submit" data-wallet-connector type="submit">Create wallet &amp; connect <b>→</b></button>
+      </form>
+      <div class="embedded-wallet-account" id="embedded-wallet-account" hidden>
+        <span>Account on this device</span>
+        <button id="copy-embedded-wallet-address" type="button"></button>
+        <small id="embedded-wallet-balance">Checking testnet balance…</small>
+        <div>
+          <button class="wallet-provider-refresh" id="download-embedded-wallet" type="button">Encrypted backup</button>
+          <a class="wallet-provider-refresh" href="https://faucet.testnet.chain.robinhood.com" target="_blank" rel="noopener noreferrer">Get test ETH ↗</a>
+        </div>
+      </div>
+    </section>
+    <div class="wallet-choice-divider"><span>Or connect an existing wallet</span></div>
+    <button class="secondary-button full-button" id="connect-walletconnect" data-wallet-connector type="button">Use Robinhood Wallet <b>→</b></button>
     <section class="wallet-provider-section" aria-labelledby="browser-wallet-title">
       <div class="wallet-provider-heading">
         <strong id="browser-wallet-title">Browser wallets</strong>

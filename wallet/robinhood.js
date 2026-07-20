@@ -284,10 +284,15 @@ export async function preparePassportAnchor({ passportId, manifest, physicalClai
   });
 }
 
+async function connectionSigner(connection) {
+  if (connection?.signer) return connection.signer;
+  await ensureRobinhoodTestnet(connection.eip1193);
+  return connection.browserProvider.getSigner();
+}
+
 export async function anchorPassport(connection, prepared) {
   assertDeployment();
-  await ensureRobinhoodTestnet(connection.eip1193);
-  const signer = await connection.browserProvider.getSigner();
+  const signer = await connectionSigner(connection);
   const registry = getRegistry(signer);
   const transaction = await registry.anchor(
     prepared.passportId,
@@ -340,8 +345,7 @@ export async function getPassportVersion(passportId, version) {
 }
 
 export async function setPassportRevoked(connection, passportId, version, revoked) {
-  await ensureRobinhoodTestnet(connection.eip1193);
-  const signer = await connection.browserProvider.getSigner();
+  const signer = await connectionSigner(connection);
   const transaction = await getRegistry(signer).setRevoked(
     normalizeBytes32(passportId),
     version,

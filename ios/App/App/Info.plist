@@ -38,7 +38,7 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Capture object and evidence photos for a passport. Nothing is published until you explicitly approve an anchor.</string>
+	<string>Use the camera and LiDAR sensor to capture a local 3D asset scan and optional evidence photos. Nothing is published until you approve an anchor.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Select object scans and evidence photos for local passport processing.</string>
 	<key>UILaunchStoryboardName</key>

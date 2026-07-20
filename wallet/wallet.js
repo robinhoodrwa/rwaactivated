@@ -24,6 +24,15 @@ import {
   resolvePassport,
   setPassportRevoked,
 } from "./robinhood.js?v=20260717.3";
+import {
+  createEmbeddedWallet,
+  downloadEmbeddedWalletBackup,
+  embeddedWalletAddress,
+  embeddedWalletBalance,
+  hasEmbeddedWallet,
+  lockEmbeddedWallet,
+  unlockEmbeddedWallet,
+} from "./embedded-wallet.js?v=20260717.4";
 
 const appState = {
   passports: [],
@@ -45,6 +54,8 @@ const meshFile = document.querySelector("#mesh-file");
 const meshDrop = document.querySelector("#mesh-drop");
 const meshFileCard = document.querySelector("#mesh-file-card");
 const recognizeButton = document.querySelector("#recognize-mesh");
+const nativeScanPanel = document.querySelector("#native-scan-panel");
+const nativeScanButton = document.querySelector("#native-asset-scan");
 const recognitionProgress = document.querySelector("#recognition-progress");
 const recognitionResult = document.querySelector("#recognition-result");
 const recognitionHashes = document.querySelector("#recognition-hashes");
@@ -171,6 +182,40 @@ function setSelectedMesh(file) {
   recognizeButton.disabled = false;
   recognizeButton.innerHTML = "Run local recognition <b>→</b>";
 }
+async function scanNativeAsset() {
+  const scanner = window.Capacitor?.Plugins?.AssetScanner;
+  if (!scanner?.scan) {
+    showToast("Native LiDAR scanning is unavailable. Import an OBJ scan from Files instead.", true);
+    return;
+  }
+
+  nativeScanButton.disabled = true;
+  nativeScanButton.innerHTML = "Opening scanner…";
+  try {
+    const result = await scanner.scan();
+    if (!result?.obj) throw new Error("The scanner did not return OBJ geometry.");
+    const file = new File(
+      [result.obj],
+      result.fileName || `rwa-asset-scan-${Date.now()}.obj`,
+      { type: "model/obj" },
+    );
+    if (file.size > MAX_MODEL_BYTES) {
+      throw new RangeError(`The captured mesh is ${formatBytes(file.size)}. Scan a smaller area or import an OBJ under ${formatBytes(MAX_MODEL_BYTES)}.`);
+    }
+    setSelectedMesh(file);
+    showToast(`LiDAR mesh captured: ${Number(result.vertexCount || 0).toLocaleString()} vertices.`);
+    await runRecognition();
+    if (appState.recognition) showScanStep("details");
+  } catch (error) {
+    if (error?.code !== "SCAN_CANCELLED") {
+      showToast(error.message || "LiDAR asset scan failed.", true);
+    }
+  } finally {
+    nativeScanButton.disabled = false;
+    nativeScanButton.innerHTML = "Open scanner <b>→</b>";
+  }
+}
+
 
 async function runRecognition() {
   if (appState.recognition) {
@@ -388,8 +433,8 @@ function populateAnchorReview(passport) {
 function updateAnchorButton() {
   const button = document.querySelector("#anchor-passport");
   button.innerHTML = appState.connection
-    ? "Approve testnet anchor <b>→</b>"
-    : "Connect Robinhood Wallet <b>→</b>";
+    ? "Publish to Robinhood Chain <b>→</b>"
+    : "Set up in-app wallet <b>→</b>";
 }
 
 async function performAnchor() {
@@ -424,7 +469,9 @@ async function performAnchor() {
     }
 
     if (!onchain) {
-      status.textContent = "Waiting for approval in Robinhood Wallet…";
+      status.textContent = appState.connection.embedded
+        ? "Publishing with your encrypted in-app wallet…"
+        : "Waiting for approval in your connected wallet…";
       receipt = await anchorPassport(appState.connection, appState.preparedAnchor);
       status.textContent = "Transaction confirmed. Resolving the onchain passport…";
       onchain = await resolvePassport(
@@ -683,14 +730,17 @@ function updateWalletUi() {
   buttons[0].querySelector(".wallet-button-label").textContent = connected
     ? shorten(appState.connection.account, 6, 4)
     : "Connect wallet";
-  buttons[1].textContent = connected ? "Disconnect wallet" : "Connect a wallet";
+  buttons[1].textContent = connected ? "Lock wallet" : "Open wallet";
   document.querySelector("#settings-wallet-state").textContent = connected
-    ? `${appState.connection.walletName} ${appState.connection.account} is connected on Robinhood Chain Testnet.`
-    : "Not connected. Every transaction requires explicit approval in your wallet.";
+    ? `${appState.connection.walletName} ${appState.connection.account} is connected to Robinhood Chain Testnet.`
+    : hasEmbeddedWallet()
+      ? `In-app wallet ${embeddedWalletAddress()} is encrypted and locked on this device.`
+      : "No wallet yet. Create an encrypted in-app account before publishing.";
   updateAnchorButton();
 }
 
 function bindConnectionLifecycle(connection) {
+  if (!connection.eip1193) return;
   connection.eip1193.on?.("disconnect", () => {
     if (appState.connection !== connection) return;
     appState.connection = null;
@@ -709,11 +759,12 @@ function bindConnectionLifecycle(connection) {
 async function disconnectCurrentWallet() {
   const connection = appState.connection;
   if (!connection) return;
+  if (connection.embedded) lockEmbeddedWallet();
   appState.connection = null;
   updateWalletUi();
   walletDialog.close();
   try {
-    await connection.eip1193.disconnect?.();
+    await connection.eip1193?.disconnect?.();
     showToast("Wallet disconnected.");
   } catch (error) {
     showToast(formatChainError(error), true);
@@ -759,6 +810,70 @@ function connectMobileWallet(event) {
     true,
   );
 }
+function refreshEmbeddedWalletPanel() {
+  const exists = hasEmbeddedWallet();
+  const connectedInApp = Boolean(appState.connection?.embedded);
+  const address = embeddedWalletAddress();
+  const form = document.querySelector("#embedded-wallet-form");
+  const passphrase = document.querySelector("#embedded-wallet-passphrase");
+  const confirmation = document.querySelector("#embedded-wallet-confirm");
+  const confirmationField = document.querySelector("#embedded-wallet-confirm-field");
+  const account = document.querySelector("#embedded-wallet-account");
+  const submit = document.querySelector("#embedded-wallet-submit");
+
+  document.querySelector("#embedded-wallet-mode").textContent = exists
+    ? connectedInApp ? "Unlocked and ready" : "Encrypted on this device"
+    : "Create your account";
+  form.hidden = connectedInApp;
+  confirmationField.hidden = exists;
+  confirmation.required = !exists;
+  passphrase.autocomplete = exists ? "current-password" : "new-password";
+  submit.innerHTML = exists ? "Unlock & connect <b>→</b>" : "Create wallet & connect <b>→</b>";
+  account.hidden = !exists;
+  document.querySelector("#copy-embedded-wallet-address").textContent = address || "";
+  passphrase.value = "";
+  confirmation.value = "";
+
+  if (exists) {
+    const balanceLabel = document.querySelector("#embedded-wallet-balance");
+    balanceLabel.textContent = "Checking testnet balance…";
+    embeddedWalletBalance()
+      .then((balance) => {
+        balanceLabel.textContent = `${balance} available for testnet gas`;
+      })
+      .catch(() => {
+        balanceLabel.textContent = "Balance unavailable · wallet remains ready";
+      });
+  }
+}
+
+async function submitEmbeddedWallet(event) {
+  event.preventDefault();
+  const passphrase = document.querySelector("#embedded-wallet-passphrase").value;
+  const confirmation = document.querySelector("#embedded-wallet-confirm").value;
+  const creating = !hasEmbeddedWallet();
+  if (creating && passphrase !== confirmation) {
+    walletDialogMessage.textContent = "The wallet passphrases do not match.";
+    return;
+  }
+
+  await connectWallet(
+    async () => {
+      const progress = (value) => {
+        walletDialogMessage.textContent = `${creating ? "Encrypting new wallet" : "Unlocking wallet"}… ${Math.round(value * 100)}%`;
+      };
+      const connection = creating
+        ? await createEmbeddedWallet(passphrase, progress)
+        : await unlockEmbeddedWallet(passphrase, progress);
+      if (creating) downloadEmbeddedWalletBackup();
+      return connection;
+    },
+    document.querySelector("#embedded-wallet-submit"),
+    creating ? "Creating and encrypting your in-app wallet…" : "Unlocking your in-app wallet…",
+  );
+  refreshEmbeddedWalletPanel();
+}
+
 
 function connectBrowserWallet(providerDetail, button) {
   return connectWallet(
@@ -795,6 +910,7 @@ async function renderBrowserWalletOptions() {
 }
 
 function openWalletDialog() {
+  refreshEmbeddedWalletPanel();
   walletDialogMessage.textContent = "";
   if (!walletDialog.open) walletDialog.showModal();
   renderBrowserWalletOptions().catch((error) => {
@@ -909,6 +1025,7 @@ function installEventHandlers() {
   window.addEventListener("hashchange", () => navigate(location.hash.slice(1) || "home", { replace: true }));
 
   meshFile.addEventListener("change", () => setSelectedMesh(meshFile.files[0] || null));
+  nativeScanButton.addEventListener("click", scanNativeAsset);
   document.querySelector("#remove-mesh").addEventListener("click", () => setSelectedMesh(null));
   recognizeButton.addEventListener("click", runRecognition);
   document.querySelector("#show-hashes").addEventListener("click", () => {
@@ -931,6 +1048,15 @@ function installEventHandlers() {
 
   assetForm.addEventListener("submit", createLocalPassport);
   document.querySelector("[data-scan-back='mesh']").addEventListener("click", () => showScanStep("mesh"));
+  document.querySelector("#embedded-wallet-form").addEventListener("submit", submitEmbeddedWallet);
+  document.querySelector("#copy-embedded-wallet-address").addEventListener("click", async () => {
+    await navigator.clipboard.writeText(embeddedWalletAddress());
+    showToast("Wallet address copied.");
+  });
+  document.querySelector("#download-embedded-wallet").addEventListener("click", () => {
+    downloadEmbeddedWalletBackup();
+    showToast("Encrypted wallet backup downloaded.");
+  });
   document.querySelector("#evidence-photo").addEventListener("change", async (event) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -997,6 +1123,10 @@ function installEventHandlers() {
 }
 
 async function initialize() {
+  const nativeScannerAvailable =
+    window.Capacitor?.isPluginAvailable?.("AssetScanner")
+    || Boolean(window.Capacitor?.Plugins?.AssetScanner?.scan);
+  nativeScanPanel.hidden = !nativeScannerAvailable;
   installEventHandlers();
   appState.passports = await listPassports();
   renderPassports();
