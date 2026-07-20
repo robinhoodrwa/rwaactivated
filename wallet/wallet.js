@@ -469,6 +469,14 @@ async function performAnchor() {
     }
 
     if (!onchain) {
+      if (appState.connection.embedded) {
+        const balance = await appState.connection.signer.provider.getBalance(appState.connection.account);
+        if (balance === 0n) {
+          status.innerHTML = 'Your in-app wallet needs free test ETH for network gas. <a href="https://faucet.testnet.chain.robinhood.com" target="_blank" rel="noopener noreferrer">Fund it from the official Robinhood faucet ↗</a>';
+          button.disabled = false;
+          return;
+        }
+      }
       status.textContent = appState.connection.embedded
         ? "Publishing with your encrypted in-app wallet…"
         : "Waiting for approval in your connected wallet…";
