@@ -298,7 +298,7 @@ private final class AssetScannerViewController: UIViewController, ARSessionDeleg
     }
 
     private static func index(at index: Int, in element: ARGeometryElement) -> UInt32 {
-        let pointer = element.buffer.contents().advanced(by: element.offset + element.bytesPerIndex * index)
+        let pointer = element.buffer.contents().advanced(by: element.bytesPerIndex * index)
         switch element.bytesPerIndex {
         case 2:
             return UInt32(pointer.assumingMemoryBound(to: UInt16.self).pointee)
