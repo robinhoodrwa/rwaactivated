@@ -14,7 +14,7 @@
   <link rel="apple-touch-icon" href="../apple-touch-icon.png">
   <link rel="manifest" href="../manifest.webmanifest?v=20260717.1">
   <link rel="stylesheet" href="wallet.css?v=20260717.5">
-  <script type="module" src="wallet.js?v=20260717.6"></script>
+  <script type="module" src="wallet.js?v=20260717.7"></script>
 </head>
 <body>
   <a class="skip-link" href="#wallet-main">Skip to wallet</a>
@@ -136,7 +136,7 @@
                 <div>
                   <span class="scan-chip"><i></i>iPhone LiDAR ready</span>
                   <strong>Scan the object with this iPhone</strong>
-                  <span>Walk slowly around it and capture every side. The 3D mesh is processed here and never leaves this phone.</span>
+                  <span>Walk slowly around every side. Green mesh shows what is captured. When you finish, the app creates the OBJ automatically and takes it straight to tagging — no Files export or re-upload.</span>
                 </div>
                 <button class="primary-button scan-cta" id="native-asset-scan" type="button">Start scanning <b>→</b></button>
               </div>
@@ -171,7 +171,7 @@
               <pre class="hash-list" id="recognition-hashes" hidden></pre>
 
               <details class="source-guidance" id="import-guidance">
-                <summary>How to export a scan as OBJ</summary>
+                <summary>Import from another scanner instead (optional)</summary>
                 <ol>
                   <li>Scan the complete object with a LiDAR or photogrammetry app.</li>
                   <li>Export a closed, detailed mesh as <b>OBJ</b> to Files.</li>

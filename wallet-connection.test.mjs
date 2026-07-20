@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   ensureRobinhoodTestnet,
   normalizeChainId,
+  walletConnectSessionSupportsChain,
 } from "./wallet/robinhood.js";
 
 const CHAIN_ID = 46_630;
@@ -45,11 +46,35 @@ test("chain IDs normalize from WalletConnect numbers and EIP-1193 strings", () =
   assert.throws(() => normalizeChainId("not-a-chain"), /Invalid chain ID/);
 });
 
+test("WalletConnect sessions must explicitly approve Robinhood Chain", () => {
+  const robinhoodAccount = "eip155:46630:0x0000000000000000000000000000000000000001";
+  const mainnetAccount = "eip155:1:0x0000000000000000000000000000000000000001";
+
+  assert.equal(walletConnectSessionSupportsChain({
+    namespaces: { eip155: { accounts: [robinhoodAccount], methods: [], events: [] } },
+  }, CHAIN_ID), true);
+  assert.equal(walletConnectSessionSupportsChain({
+    namespaces: { eip155: { accounts: [mainnetAccount], methods: [], events: [] } },
+  }, CHAIN_ID), false);
+});
+
+
 test("WalletConnect numeric chain IDs do not trigger a false network switch", async () => {
   const { provider, calls } = createProvider(CHAIN_ID);
 
   await ensureRobinhoodTestnet(provider);
 
+  assert.deepEqual(calls, ["eth_chainId"]);
+});
+
+test("a wrong-chain WalletConnect session is rejected without requesting an unsupported switch", async () => {
+  const { provider, calls } = createProvider("0x1");
+  provider.isWalletConnect = true;
+
+  await assert.rejects(
+    ensureRobinhoodTestnet(provider),
+    /Reconnect Robinhood Wallet and approve Robinhood Chain Testnet/,
+  );
   assert.deepEqual(calls, ["eth_chainId"]);
 });
 

@@ -127,9 +127,21 @@ export function normalizeChainId(value) {
   return Number(parsed);
 }
 
+export function walletConnectSessionSupportsChain(session, chainId) {
+  const chain = `eip155:${normalizeChainId(chainId)}`;
+  return Object.entries(session?.namespaces || {}).some(([namespaceKey, namespace]) => (
+    namespaceKey === chain
+    || namespace?.chains?.includes(chain)
+    || namespace?.accounts?.some((account) => account.startsWith(`${chain}:`))
+  ));
+}
+
 export async function ensureRobinhoodTestnet(provider) {
   const current = await provider.request({ method: "eth_chainId" });
   if (normalizeChainId(current) === ROBINHOOD_TESTNET.chainId) return;
+  if (provider?.isWalletConnect) {
+    throw new Error(`Reconnect Robinhood Wallet and approve ${ROBINHOOD_TESTNET.chainName}.`);
+  }
 
   try {
     await provider.request({
@@ -179,11 +191,10 @@ async function getWalletConnectProvider() {
   const { EthereumProvider } = await import("./vendor/walletconnect.min.js?v=20260717.3");
   walletConnectProvider = await EthereumProvider.init({
     projectId: WALLETCONNECT.projectId,
-    optionalChains: [ROBINHOOD_TESTNET.chainId, 1],
+    chains: [ROBINHOOD_TESTNET.chainId],
     showQrModal: true,
     rpcMap: {
       [ROBINHOOD_TESTNET.chainId]: ROBINHOOD_TESTNET.rpcUrls[0],
-      1: `https://rpc.walletconnect.org/v1/?chainId=eip155:1&projectId=${WALLETCONNECT.projectId}`,
     },
     metadata: {
       name: "RWA Passport",
@@ -212,12 +223,15 @@ async function getWalletConnectProvider() {
 }
 
 export async function connectWalletConnect() {
-  let provider = await getWalletConnectProvider();
+  const provider = await getWalletConnectProvider();
   const expiresAt = Number(provider.session?.expiry || 0);
-  if (provider.session && expiresAt > 0 && expiresAt <= Math.floor(Date.now() / 1_000)) {
+  const expired = expiresAt > 0 && expiresAt <= Math.floor(Date.now() / 1_000);
+  const wrongChain = provider.session && (
+    !walletConnectSessionSupportsChain(provider.session, ROBINHOOD_TESTNET.chainId)
+    || normalizeChainId(provider.chainId) !== ROBINHOOD_TESTNET.chainId
+  );
+  if (provider.session && (expired || wrongChain)) {
     await provider.disconnect().catch(() => {});
-    if (walletConnectProvider === provider) walletConnectProvider = undefined;
-    provider = await getWalletConnectProvider();
   }
 
   if (!provider.session) await provider.connect();

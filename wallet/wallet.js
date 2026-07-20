@@ -23,7 +23,7 @@ import {
   preparePassportAnchor,
   resolvePassport,
   setPassportRevoked,
-} from "./robinhood.js?v=20260717.3";
+} from "./robinhood.js?v=20260717.4";
 import {
   createEmbeddedWallet,
   downloadEmbeddedWalletBackup,

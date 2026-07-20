@@ -55,7 +55,7 @@ private struct AssetScanResult {
     let faceCount: Int
 }
 
-private final class AssetScannerViewController: UIViewController, ARSessionDelegate {
+private final class AssetScannerViewController: UIViewController, ARSCNViewDelegate {
     var onCancel: (() -> Void)?
     var onComplete: ((AssetScanResult) -> Void)?
 
@@ -63,6 +63,7 @@ private final class AssetScannerViewController: UIViewController, ARSessionDeleg
     private let statusLabel = UILabel()
     private let finishButton = UIButton(type: .system)
     private var meshAnchors: [UUID: ARMeshAnchor] = [:]
+    private let meshLock = NSLock()
     private var isExporting = false
 
     override func viewDidLoad() {
@@ -85,13 +86,26 @@ private final class AssetScannerViewController: UIViewController, ARSessionDeleg
     private func configureScene() {
         sceneView.translatesAutoresizingMaskIntoConstraints = false
         sceneView.automaticallyUpdatesLighting = true
-        sceneView.session.delegate = self
+        sceneView.delegate = self
         view.addSubview(sceneView)
         NSLayoutConstraint.activate([
             sceneView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             sceneView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             sceneView.topAnchor.constraint(equalTo: view.topAnchor),
             sceneView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+
+        let coachingOverlay = ARCoachingOverlayView()
+        coachingOverlay.translatesAutoresizingMaskIntoConstraints = false
+        coachingOverlay.session = sceneView.session
+        coachingOverlay.goal = .tracking
+        coachingOverlay.activatesAutomatically = true
+        view.addSubview(coachingOverlay)
+        NSLayoutConstraint.activate([
+            coachingOverlay.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            coachingOverlay.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            coachingOverlay.topAnchor.constraint(equalTo: view.topAnchor),
+            coachingOverlay.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
 
@@ -108,7 +122,7 @@ private final class AssetScannerViewController: UIViewController, ARSessionDeleg
         titleLabel.font = .systemFont(ofSize: 20, weight: .bold)
 
         statusLabel.translatesAutoresizingMaskIntoConstraints = false
-        statusLabel.text = "Move slowly around every side. 0 mesh sections captured."
+        statusLabel.text = "Move slowly around every side. Green lines show captured geometry."
         statusLabel.textColor = UIColor.white.withAlphaComponent(0.82)
         statusLabel.font = .systemFont(ofSize: 14, weight: .medium)
         statusLabel.numberOfLines = 2
@@ -174,35 +188,68 @@ private final class AssetScannerViewController: UIViewController, ARSessionDeleg
         sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
     }
 
-    func session(_ session: ARSession, didAdd anchors: [ARAnchor]) {
-        updateMeshAnchors(anchors)
+    func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
+        guard let meshAnchor = anchor as? ARMeshAnchor else { return }
+        store(meshAnchor)
+        node.geometry = Self.makeMeshGeometry(meshAnchor.geometry)
     }
 
-    func session(_ session: ARSession, didUpdate anchors: [ARAnchor]) {
-        updateMeshAnchors(anchors)
+    func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
+        guard let meshAnchor = anchor as? ARMeshAnchor else { return }
+        store(meshAnchor)
+        node.geometry = Self.makeMeshGeometry(meshAnchor.geometry)
     }
 
-    func session(_ session: ARSession, didRemove anchors: [ARAnchor]) {
-        for anchor in anchors {
-            meshAnchors.removeValue(forKey: anchor.identifier)
-        }
+    func renderer(_ renderer: SCNSceneRenderer, didRemove node: SCNNode, for anchor: ARAnchor) {
+        guard anchor is ARMeshAnchor else { return }
+        meshLock.lock()
+        meshAnchors.removeValue(forKey: anchor.identifier)
+        meshLock.unlock()
         updateStatus()
     }
 
-    private func updateMeshAnchors(_ anchors: [ARAnchor]) {
-        for case let meshAnchor as ARMeshAnchor in anchors {
-            meshAnchors[meshAnchor.identifier] = meshAnchor
-        }
+    private func store(_ meshAnchor: ARMeshAnchor) {
+        meshLock.lock()
+        meshAnchors[meshAnchor.identifier] = meshAnchor
+        meshLock.unlock()
         updateStatus()
+    }
+
+    private static func makeMeshGeometry(_ mesh: ARMeshGeometry) -> SCNGeometry {
+        let vertices = SCNGeometrySource(
+            buffer: mesh.vertices.buffer,
+            vertexFormat: mesh.vertices.format,
+            semantic: .vertex,
+            vertexCount: mesh.vertices.count,
+            dataOffset: mesh.vertices.offset,
+            dataStride: mesh.vertices.stride
+        )
+        let faces = SCNGeometryElement(
+            buffer: mesh.faces.buffer,
+            primitiveType: .triangles,
+            primitiveCount: mesh.faces.count,
+            bytesPerIndex: mesh.faces.bytesPerIndex
+        )
+        let geometry = SCNGeometry(sources: [vertices], elements: [faces])
+        let material = SCNMaterial()
+        material.lightingModel = .constant
+        material.diffuse.contents = UIColor(red: 0.45, green: 1, blue: 0.48, alpha: 0.92)
+        material.emission.contents = UIColor(red: 0.2, green: 0.82, blue: 0.28, alpha: 0.72)
+        material.fillMode = .lines
+        material.isDoubleSided = true
+        geometry.materials = [material]
+        return geometry
     }
 
     private func updateStatus() {
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
+            self.meshLock.lock()
             let count = self.meshAnchors.count
+            self.meshLock.unlock()
             self.statusLabel.text = count == 0
-                ? "Move slowly around every side. Waiting for LiDAR mesh…"
-                : "Move slowly around every side. \(count) mesh sections captured."
+                ? "Move slowly around the asset. Green mesh will appear as LiDAR captures it."
+                : "Green mesh is saved. Keep moving to cover every side · \(count) sections."
             self.finishButton.isEnabled = count > 0 && !self.isExporting
             self.finishButton.alpha = self.finishButton.isEnabled ? 1 : 0.48
         }
@@ -215,13 +262,18 @@ private final class AssetScannerViewController: UIViewController, ARSessionDeleg
     }
 
     @objc private func finishScan() {
-        guard !isExporting, !meshAnchors.isEmpty else { return }
+        meshLock.lock()
+        let hasMesh = !meshAnchors.isEmpty
+        meshLock.unlock()
+        guard !isExporting, hasMesh else { return }
         isExporting = true
         finishButton.isEnabled = false
         finishButton.alpha = 0.48
         finishButton.setTitle("Preparing mesh…", for: .normal)
         sceneView.session.pause()
+        meshLock.lock()
         let anchors = Array(meshAnchors.values)
+        meshLock.unlock()
 
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             do {
@@ -265,13 +317,20 @@ private final class AssetScannerViewController: UIViewController, ARSessionDeleg
                 output += "v \(world.x) \(world.y) \(world.z)\n"
             }
 
+            for index in 0..<geometry.normals.count {
+                let local = vertex(at: index, in: geometry.normals)
+                let transformed = anchor.transform * SIMD4<Float>(local.x, local.y, local.z, 0)
+                let normal = simd_normalize(SIMD3<Float>(transformed.x, transformed.y, transformed.z))
+                output += "vn \(normal.x) \(normal.y) \(normal.z)\n"
+            }
+
             let facesToWrite = min(geometry.faces.count, remainingFaces)
             for faceIndex in 0..<facesToWrite {
                 let base = faceIndex * geometry.faces.indexCountPerPrimitive
                 let first = Int(index(at: base, in: geometry.faces)) + vertexOffset
                 let second = Int(index(at: base + 1, in: geometry.faces)) + vertexOffset
                 let third = Int(index(at: base + 2, in: geometry.faces)) + vertexOffset
-                output += "f \(first) \(second) \(third)\n"
+                output += "f \(first)//\(first) \(second)//\(second) \(third)//\(third)\n"
             }
 
             vertexOffset += geometry.vertices.count
