@@ -29,7 +29,7 @@ jobs:
       - name: Build native iOS web assets
         run: |
           npm ci
-          npm run build:ios
+          npm run build && npx cap sync ios
 
       - name: Show Xcode version
         run: xcodebuild -version
