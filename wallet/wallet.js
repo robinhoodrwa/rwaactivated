@@ -113,7 +113,7 @@ function navigate(screenName, { replace = false } = {}) {
 
   const hash = `#${target.dataset.screen}`;
   if (location.hash !== hash) {
-    history[replace ? "replaceState" : "pushState"](null, "", hash);
+    history[replace ? "replaceState" : "pushState"](null, "", `${location.pathname}${location.search}${hash}`);
   }
   window.scrollTo({ top: 0, behavior: "instant" });
 
