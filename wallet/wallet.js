@@ -34,12 +34,18 @@ import {
   unlockEmbeddedWallet,
 } from "./embedded-wallet.js?v=20260717.4";
 import { fileFromNativeScan } from "./native-scan.js?v=20260720.1";
+import {
+  formatUsd,
+  requestAiValuation,
+  summarizeAnchoredValue,
+} from "./valuation.js?v=20260720.1";
 
 const appState = {
   passports: [],
   selectedMesh: null,
   recognition: null,
   evidencePhoto: null,
+  valuation: null,
   draftPassport: null,
   preparedAnchor: null,
   connection: null,
@@ -136,12 +142,14 @@ function resetScanFlow() {
   appState.selectedMesh = null;
   appState.recognition = null;
   appState.evidencePhoto = null;
+  appState.valuation = null;
   appState.draftPassport = null;
   appState.preparedAnchor = null;
   meshFile.value = "";
   assetForm.reset();
   document.querySelector("#evidence-photo").value = "";
   document.querySelector("#photo-preview").hidden = true;
+  clearValuationDisplay();
   meshFileCard.hidden = true;
   recognitionProgress.hidden = true;
   recognitionResult.hidden = true;
@@ -356,6 +364,7 @@ function makeManifest(passportId, values) {
           },
         ]
       : [],
+    valuation: appState.valuation ? structuredClone(appState.valuation) : null,
     declarations: {
       reviewedByOperator: true,
       limitations:
@@ -510,8 +519,70 @@ async function performAnchor() {
   }
 }
 
+function clearValuationDisplay(message = "") {
+  appState.valuation = null;
+  const result = document.querySelector("#valuation-result");
+  const status = document.querySelector("#valuation-status");
+  if (result) result.hidden = true;
+  if (status) status.textContent = message;
+}
+
+function renderValuation(valuation) {
+  document.querySelector("#valuation-likely").textContent = formatUsd(valuation.likely);
+  document.querySelector("#valuation-range").textContent =
+    `${formatUsd(valuation.low)} – ${formatUsd(valuation.high)}`;
+  document.querySelector("#valuation-confidence").textContent = titleCase(valuation.confidence);
+  document.querySelector("#valuation-assumptions").textContent =
+    valuation.assumptions.join(" • ");
+  document.querySelector("#valuation-result").hidden = false;
+  document.querySelector("#valuation-status").textContent =
+    `Estimated ${new Date(valuation.asOf).toLocaleDateString()} · AI estimate, not an appraisal.`;
+}
+
+async function estimateCurrentAsset() {
+  const button = document.querySelector("#valuation-request");
+  const status = document.querySelector("#valuation-status");
+  const name = assetForm.elements.assetName;
+  const assetClass = assetForm.elements.assetClass;
+  if (!name.reportValidity() || !assetClass.reportValidity()) return;
+
+  const values = Object.fromEntries(new FormData(assetForm));
+  button.disabled = true;
+  button.textContent = "Estimating…";
+  status.textContent = appState.evidencePhoto
+    ? "Sending asset details and the compressed evidence photo for a one-time estimate…"
+    : "Sending asset details for a one-time estimate…";
+  document.querySelector("#valuation-result").hidden = true;
+  try {
+    appState.valuation = await requestAiValuation({
+      name: values.assetName,
+      class: values.assetClass,
+      manufacturer: values.manufacturer,
+      model: values.model,
+      note: values.note,
+    }, appState.evidencePhoto);
+    renderValuation(appState.valuation);
+  } catch (error) {
+    appState.valuation = null;
+    status.textContent = error.message || "The estimate could not be created.";
+  } finally {
+    button.disabled = false;
+    button.textContent = "Estimate with AI";
+  }
+}
+
+function renderPortfolioValue() {
+  const total = summarizeAnchoredValue(appState.passports);
+  document.querySelector("#portfolio-value").textContent = formatUsd(total.likely);
+  document.querySelector("#portfolio-range").textContent =
+    total.count ? `${formatUsd(total.low)} – ${formatUsd(total.high)}` : "No anchored estimates";
+  document.querySelector("#portfolio-count").textContent =
+    `${total.count} valued ${total.count === 1 ? "passport" : "passports"}`;
+}
+
 function renderPassports() {
   passportList.replaceChildren();
+  renderPortfolioValue();
   emptyPassports.hidden = appState.passports.length > 0;
   passportList.hidden = appState.passports.length === 0;
 
@@ -528,6 +599,7 @@ function renderPassports() {
       </div>
       <h3>${escapeHtml(passport.manifest.asset.name)}</h3>
       <p>${escapeHtml([passport.manifest.asset.manufacturer, passport.manifest.asset.model].filter(Boolean).join(" · ") || "Object passport")}</p>
+      ${passport.manifest.valuation?.status === "estimated" ? `<strong class="passport-value">${escapeHtml(formatUsd(passport.manifest.valuation.likely))} estimated</strong>` : ""}
       <code>${escapeHtml(shorten(passport.passportId, 12, 9))}</code>`;
     button.addEventListener("click", () => openPassportDetails(passport.passportId));
     passportList.append(button);
@@ -557,6 +629,7 @@ async function openPassportDetails(passportId) {
         <div><dt>Grid2d hashes</dt><dd>${passport.recognition.hashes.length}</dd></div>
         <div><dt>Source digest</dt><dd>${escapeHtml(passport.recognition.sourceDigest)}</dd></div>
         ${anchor ? `<div><dt>Manifest hash</dt><dd>${escapeHtml(anchor.manifestHash)}</dd></div><div><dt>Controller</dt><dd>${escapeHtml(anchor.controller || anchor.anchoredBy)}</dd></div><div><dt>Transaction</dt><dd><a href="${escapeHtml(anchor.explorerUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(shorten(anchor.transactionHash, 12, 10))} ↗</a></dd></div>` : ""}
+        ${passport.manifest.valuation?.status === "estimated" ? `<div><dt>AI estimate</dt><dd>${escapeHtml(formatUsd(passport.manifest.valuation.likely))}</dd></div><div><dt>Estimated range</dt><dd>${escapeHtml(`${formatUsd(passport.manifest.valuation.low)} – ${formatUsd(passport.manifest.valuation.high)}`)}</dd></div><div><dt>Confidence</dt><dd>${escapeHtml(titleCase(passport.manifest.valuation.confidence))}</dd></div><div><dt>As of</dt><dd>${escapeHtml(new Date(passport.manifest.valuation.asOf).toLocaleDateString())}</dd></div><div><dt>Valuation basis</dt><dd>${escapeHtml(passport.manifest.valuation.basis)}</dd></div><div><dt>Important</dt><dd>${escapeHtml(passport.manifest.valuation.disclaimer)}</dd></div>` : ""}
       </dl>
     </section>
     <div class="detail-actions">
@@ -1048,6 +1121,12 @@ function installEventHandlers() {
   meshDrop.addEventListener("drop", (event) => setSelectedMesh(event.dataTransfer.files[0] || null));
 
   assetForm.addEventListener("submit", createLocalPassport);
+  document.querySelector("#valuation-request").addEventListener("click", estimateCurrentAsset);
+  assetForm.addEventListener("input", (event) => {
+    if (appState.valuation && ["assetName", "assetClass", "manufacturer", "model", "note"].includes(event.target.name)) {
+      clearValuationDisplay("Asset details changed. Request a new estimate to include it.");
+    }
+  });
   document.querySelector("[data-scan-back='mesh']").addEventListener("click", () => showScanStep("mesh"));
   document.querySelector("#embedded-wallet-form").addEventListener("submit", submitEmbeddedWallet);
   document.querySelector("#copy-embedded-wallet-address").addEventListener("click", async () => {
@@ -1063,6 +1142,7 @@ function installEventHandlers() {
     if (!file) return;
     try {
       appState.evidencePhoto = await processEvidencePhoto(file);
+      clearValuationDisplay(appState.valuation ? "Photo changed. Request a new estimate to include it." : "");
       document.querySelector("#photo-image").src = appState.evidencePhoto.dataUrl;
       document.querySelector("#photo-preview").hidden = false;
     } catch (error) {
@@ -1072,6 +1152,7 @@ function installEventHandlers() {
   });
   document.querySelector("#remove-photo").addEventListener("click", () => {
     appState.evidencePhoto = null;
+    clearValuationDisplay(appState.valuation ? "Photo removed. Request a new estimate to update it." : "");
     document.querySelector("#evidence-photo").value = "";
     document.querySelector("#photo-preview").hidden = true;
   });

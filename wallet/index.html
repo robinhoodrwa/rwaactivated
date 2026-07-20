@@ -13,8 +13,8 @@
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../apple-touch-icon.png">
   <link rel="manifest" href="../manifest.webmanifest?v=20260717.1">
-  <link rel="stylesheet" href="wallet.css?v=20260717.5">
-  <script type="module" src="wallet.js?v=20260717.8"></script>
+  <link rel="stylesheet" href="wallet.css?v=20260720.1">
+  <script type="module" src="wallet.js?v=20260720.1"></script>
 </head>
 <body>
   <a class="skip-link" href="#wallet-main">Skip to wallet</a>
@@ -87,6 +87,18 @@
             </div>
             <button class="compact-button" type="button" data-go="scan">New passport</button>
           </div>
+          <section class="portfolio-summary" id="portfolio-summary" aria-labelledby="portfolio-summary-title">
+            <div class="portfolio-summary-head">
+              <span class="portfolio-kicker" id="portfolio-summary-title">Anchored portfolio value</span>
+              <span class="portfolio-scope">Passports anchored by this device only</span>
+            </div>
+            <dl class="portfolio-stats">
+              <div><dt>Total likely value</dt><dd id="portfolio-value">—</dd></div>
+              <div><dt>Aggregate range</dt><dd id="portfolio-range">—</dd></div>
+              <div><dt>Anchored passports</dt><dd id="portfolio-count">0</dd></div>
+            </dl>
+            <p class="portfolio-note">Totals combine the non-binding AI fair-market estimates saved with each anchored passport. Estimates are not appraisals, offers, or statements of what anyone will pay.</p>
+          </section>
           <div class="passport-grid" id="passport-list"></div>
           <div class="empty-passports" id="empty-passports">
             <span class="empty-icon" aria-hidden="true"></span>
@@ -201,12 +213,35 @@
                 <label class="field full-field"><span>Evidence note</span><textarea id="asset-note" name="note" maxlength="600" rows="4" placeholder="Inspection context, source, or visible condition — optional"></textarea></label>
 
                 <div class="photo-field full-field">
-                  <div><strong>Evidence photo</strong><span>Optional · compressed and stored only on this device</span></div>
+                  <div><strong>Evidence photo</strong><span>Optional · compressed and stored on this device · shared only if you request an AI estimate</span></div>
                   <label class="photo-button" for="evidence-photo">Use camera or Photos</label>
                   <input id="evidence-photo" type="file" accept="image/*" capture="environment" hidden>
                   <div class="photo-preview" id="photo-preview" hidden><img id="photo-image" alt="Selected evidence preview"><button id="remove-photo" type="button">Remove</button></div>
                 </div>
 
+                <section class="valuation-panel full-field" aria-labelledby="valuation-title">
+                  <div class="valuation-head">
+                    <div>
+                      <strong id="valuation-title">AI fair-market estimate</strong>
+                      <span>Optional · an estimate, not an appraisal</span>
+                    </div>
+                    <button class="secondary-button" id="valuation-request" type="button">Estimate with AI</button>
+                  </div>
+                  <p class="valuation-disclosure">Nothing leaves this device until you tap the button. When you request an estimate, the asset details entered above — and your compressed evidence photo, if you added one — are sent once to the AI valuation service for this estimate only. Your mesh, hashes, and passport record stay local.</p>
+                  <div class="valuation-status" id="valuation-status" role="status" aria-live="polite"></div>
+                  <div class="valuation-result" id="valuation-result" hidden>
+                    <dl class="valuation-figures">
+                      <div><dt>Likely value</dt><dd id="valuation-likely"></dd></div>
+                      <div><dt>Range</dt><dd id="valuation-range"></dd></div>
+                      <div><dt>Confidence</dt><dd id="valuation-confidence"></dd></div>
+                    </dl>
+                    <div class="valuation-assumptions">
+                      <span>Assumptions</span>
+                      <p id="valuation-assumptions"></p>
+                    </div>
+                    <p class="valuation-disclaimer"><b>This is an AI estimate, not an appraisal.</b> It is non-binding, may be wrong, and is no substitute for a licensed appraiser, title check, or inspection.</p>
+                  </div>
+                </section>
                 <label class="review-check full-field"><input id="claim-review" type="checkbox" required><span><b>I reviewed these claims.</b> A geometry match does not prove legal ownership, title, custody, condition, authenticity, or value.</span></label>
 
                 <div class="form-message full-field" id="asset-form-message" role="alert" aria-live="polite"></div>

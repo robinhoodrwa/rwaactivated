@@ -1,6 +1,6 @@
 "use strict";
 
-const CACHE_NAME = "rwa-product-suite-v22";
+const CACHE_NAME = "rwa-product-suite-v23";
 const CORE_ASSETS = [
   "/",
   "/styles.css",
@@ -15,8 +15,9 @@ const CORE_ASSETS = [
   "/icon-512.png",
   "/manifest.webmanifest?v=20260719.1",
   "/wallet/",
-  "/wallet/wallet.js?v=20260717.8",
-  "/wallet/wallet.css?v=20260717.5",
+  "/wallet/wallet.js?v=20260720.1",
+  "/wallet/wallet.css?v=20260720.1",
+  "/wallet/valuation.js?v=20260720.1",
   "/wallet/passport-store.js?v=20260717.3",
   "/wallet/recognition.js?v=20260717.3",
   "/wallet/robinhood.js?v=20260717.4",
